@@ -1,0 +1,152 @@
+# Services for Medication Tracker
+
+take_dose:
+  name: Take Dose
+  description: Record taking a dose of medication
+  fields:
+    medication_id:
+      name: Medication ID
+      description: The ID of the medication (lowercase name with underscores)
+      required: true
+      example: "aspirin_100mg"
+      selector:
+        text:
+    doses:
+      name: Number of Doses
+      description: Number of doses taken (default is 1)
+      required: false
+      default: 1
+      example: 1
+      selector:
+        number:
+          min: 1
+          max: 10
+
+refill:
+  name: Refill Medication
+  description: Record a medication refill
+  fields:
+    medication_id:
+      name: Medication ID
+      description: The ID of the medication (lowercase name with underscores)
+      required: true
+      example: "aspirin_100mg"
+      selector:
+        text:
+    pills:
+      name: Number of Pills
+      description: Number of pills in the refill
+      required: true
+      example: 90
+      selector:
+        number:
+          min: 1
+          max: 1000
+
+update_refills:
+  name: Update Refills Left
+  description: Update the number of refills remaining
+  fields:
+    medication_id:
+      name: Medication ID
+      description: The ID of the medication (lowercase name with underscores)
+      required: true
+      example: "aspirin_100mg"
+      selector:
+        text:
+    refills:
+      name: Refills Remaining
+      description: Number of refills left
+      required: true
+      example: 3
+      selector:
+        number:
+          min: 0
+          max: 99
+
+check_off_dose:
+  name: Check Off Daily Dose
+  description: Mark a daily dose as taken (changes button from red to green)
+  fields:
+    dose_id:
+      name: Dose ID
+      description: The dose to check off
+      required: true
+      example: "morning"
+      selector:
+        select:
+          options:
+            - label: "Morning Pills"
+              value: "morning"
+            - label: "Lunch Pills"
+              value: "lunch"
+            - label: "Evening Pills"
+              value: "evening"
+            - label: "Morning Puffer"
+              value: "morning_puffer"
+            - label: "Evening Puffer"
+              value: "evening_puffer"
+
+uncheck_dose:
+  name: Uncheck Daily Dose
+  description: Unmark a daily dose (for corrections)
+  fields:
+    dose_id:
+      name: Dose ID
+      description: The dose to uncheck
+      required: true
+      example: "morning"
+      selector:
+        select:
+          options:
+            - label: "Morning Pills"
+              value: "morning"
+            - label: "Lunch Pills"
+              value: "lunch"
+            - label: "Evening Pills"
+              value: "evening"
+            - label: "Morning Puffer"
+              value: "morning_puffer"
+            - label: "Evening Puffer"
+              value: "evening_puffer"
+
+update_doctor:
+  name: Update Prescribing Doctor
+  description: Change the prescribing doctor for a medication
+  fields:
+    medication_id:
+      name: Medication ID
+      description: The ID of the medication (lowercase name with underscores)
+      required: true
+      example: "aspirin"
+      selector:
+        text:
+    doctor_name:
+      name: Doctor Name
+      description: The new prescribing doctor's name
+      required: true
+      example: "Dr. Jane Smith"
+      selector:
+        text:
+
+update_stock:
+  name: Update Pills on Hand
+  description: Manually set the current number of pills on hand
+  fields:
+    medication_id:
+      name: Medication ID
+      description: The ID of the medication (lowercase name with underscores)
+      required: true
+      example: "aspirin"
+      selector:
+        text:
+    pills:
+      name: Pills on Hand
+      description: The current number of pills you actually have
+      required: true
+      example: 45
+      selector:
+        number:
+          min: 0
+          max: 1000
+          mode: box

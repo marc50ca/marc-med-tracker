@@ -1,0 +1,70 @@
+# Example Configuration for Marc Med Tracker
+# Add this to your configuration.yaml
+
+marc_med_tracker:
+  medications:
+    # Example 1: Daily medication with single dose
+    - name: "Aspirin"
+      prescribing_doctor: "Dr. Sarah Smith"
+      refills_left: 3
+      last_refilled: "2026-01-15"
+      strength: "100mg"
+      doses_per_day: 1
+      pills_per_dose: 1
+      initial_stock: 90
+      notes: "Take with food in the morning"
+    
+    # Example 2: Vitamin supplement
+    - name: "Vitamin D"
+      prescribing_doctor: "Dr. Michael Johnson"
+      refills_left: 5
+      last_refilled: "2026-02-01"
+      strength: "2000 IU"
+      doses_per_day: 1
+      pills_per_dose: 1
+      initial_stock: 120
+      notes: "Take in the morning with breakfast"
+    
+    # Example 3: Medication taken multiple times per day
+    - name: "Blood Pressure Medication"
+      prescribing_doctor: "Dr. Sarah Smith"
+      refills_left: 2
+      last_refilled: "2026-02-10"
+      strength: "10mg"
+      doses_per_day: 2
+      pills_per_dose: 1
+      initial_stock: 60
+      notes: "Take once in morning and once in evening"
+    
+    # Example 4: Medication with multiple pills per dose
+    - name: "Calcium Supplement"
+      prescribing_doctor: "Dr. Emily Chen"
+      refills_left: 4
+      last_refilled: "2026-01-20"
+      strength: "500mg"
+      doses_per_day: 2
+      pills_per_dose: 2  # Takes 2 pills per dose
+      initial_stock: 180
+      notes: "Take 2 pills twice daily with meals"
+    
+    # Example 5: As-needed medication
+    - name: "Pain Reliever"
+      prescribing_doctor: "Dr. Sarah Smith"
+      refills_left: 1
+      last_refilled: "2026-01-05"
+      strength: "500mg"
+      doses_per_day: 1  # Average usage
+      pills_per_dose: 1
+      initial_stock: 30
+      notes: "Take as needed for pain, maximum 3 per day"
+    
+    # Example 6: Medication with no refills left
+    - name: "Antibiotic Course"
+      prescribing_doctor: "Dr. Mark Williams"
+      refills_left: 0
+      last_refilled: "2026-02-14"
+      strength: "250mg"
+      doses_per_day: 3
+      pills_per_dose: 1
+      initial_stock: 21
+      notes: "Complete full course - 7 days"

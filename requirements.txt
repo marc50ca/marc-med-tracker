@@ -1,0 +1,11 @@
+# Production dependencies
+homeassistant>=2024.1.0
+voluptuous>=0.13.0
+
+# Development dependencies
+black>=23.0.0
+isort>=5.12.0
+ruff>=0.1.0
+pytest>=7.4.0
+pytest-homeassistant-custom-component>=0.13.0
+pyyaml>=6.0

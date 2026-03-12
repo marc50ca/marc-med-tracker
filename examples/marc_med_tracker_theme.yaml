@@ -1,0 +1,46 @@
+# Marc Med Tracker Theme
+# Place this in your themes folder: /config/themes/marc_med_tracker.yaml
+# Then add to configuration.yaml:
+#   frontend:
+#     themes: !include_dir_merge_named themes
+
+marc_med_tracker:
+  # Base theme colors
+  primary-color: "#2196F3"
+  accent-color: "#4CAF50"
+  
+  # Background colors
+  primary-background-color: "#fafafa"
+  secondary-background-color: "#e7e7e7"
+  
+  # Text colors
+  primary-text-color: "#212121"
+  secondary-text-color: "#727272"
+  disabled-text-color: "#bdbdbd"
+  
+  # Sidebar
+  sidebar-background-color: "#2196F3"
+  sidebar-text-color: "#ffffff"
+  
+  # Cards
+  card-background-color: "#ffffff"
+  
+  # State colors - THIS IS KEY FOR RED/GREEN
+  state-binary-sensor-off-color: "#f44336"  # RED when off (not taken)
+  state-binary-sensor-on-color: "#4CAF50"   # GREEN when on (taken)
+  
+  # Entity states
+  state-icon-color: "#44739e"
+  state-icon-active-color: "#4CAF50"
+  
+  # Switches
+  switch-unchecked-button-color: "#f44336"
+  switch-unchecked-track-color: "#ffcdd2"
+  switch-checked-button-color: "#4CAF50"
+  switch-checked-track-color: "#c8e6c9"
+  
+  # Paper toggle
+  paper-toggle-button-unchecked-button-color: "#f44336"
+  paper-toggle-button-unchecked-bar-color: "#ffcdd2"
+  paper-toggle-button-checked-button-color: "#4CAF50"
+  paper-toggle-button-checked-bar-color: "#c8e6c9"

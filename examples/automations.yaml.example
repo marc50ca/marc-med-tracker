@@ -1,0 +1,574 @@
+# Example Automations for Medication Tracker
+# Add these to your automations.yaml or via the UI
+
+# ============================================
+# DAILY REMINDERS
+# ============================================
+
+# Morning medication reminder
+- id: morning_medication_reminder
+  alias: "Morning Medication Reminder"
+  description: "Remind to take morning medications at 8 AM"
+  trigger:
+    - platform: time
+      at: "08:00:00"
+  condition:
+    # Only remind if we have stock
+    - condition: numeric_state
+      entity_id: sensor.medication_aspirin
+      above: 0
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "☀️ Morning Medications"
+        message: "Time to take your morning medications"
+        data:
+          actions:
+            - action: "TOOK_MORNING_MEDS"
+              title: "Mark as Taken"
+
+# Evening medication reminder
+- id: evening_medication_reminder
+  alias: "Evening Medication Reminder"
+  description: "Remind to take evening medications at 8 PM"
+  trigger:
+    - platform: time
+      at: "20:00:00"
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.medication_blood_pressure_medication
+      above: 0
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "🌙 Evening Medications"
+        message: "Time to take your evening medications"
+
+# ============================================
+# STOCK ALERTS
+# ============================================
+
+# Low stock warning (7 days or less)
+- id: medication_low_stock_warning
+  alias: "Medication Low Stock Warning"
+  description: "Alert when medication is running low"
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.medication_aspirin
+        - sensor.medication_vitamin_d
+        - sensor.medication_blood_pressure_medication
+  condition:
+    - condition: template
+      value_template: >
+        {{ state_attr(trigger.entity_id, 'days_remaining') | int <= 7 and
+           state_attr(trigger.entity_id, 'days_remaining') | int > 3 }}
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "⚠️ Medication Running Low"
+        message: >
+          {{ state_attr(trigger.entity_id, 'medication_name') }} is running low.
+          Only {{ state_attr(trigger.entity_id, 'days_remaining') }} days remaining.
+          Refills left: {{ state_attr(trigger.entity_id, 'refills_left') }}
+        data:
+          tag: "med_low_{{ trigger.entity_id }}"
+
+# Critical stock warning (3 days or less)
+- id: medication_critical_stock
+  alias: "Medication Critical Stock"
+  description: "Urgent alert when medication is critically low"
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.medication_aspirin
+        - sensor.medication_vitamin_d
+        - sensor.medication_blood_pressure_medication
+  condition:
+    - condition: template
+      value_template: >
+        {{ state_attr(trigger.entity_id, 'days_remaining') | int <= 3 and
+           state_attr(trigger.entity_id, 'days_remaining') | int > 0 }}
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "🚨 URGENT: Medication Critical"
+        message: >
+          {{ state_attr(trigger.entity_id, 'medication_name') }} is critically low!
+          Only {{ state_attr(trigger.entity_id, 'days_remaining') }} days remaining.
+          Contact {{ state_attr(trigger.entity_id, 'prescribing_doctor') }} for refill.
+        data:
+          priority: high
+          tag: "med_critical_{{ trigger.entity_id }}"
+
+# Out of stock alert
+- id: medication_out_of_stock
+  alias: "Medication Out of Stock"
+  description: "Alert when medication runs out"
+  trigger:
+    - platform: numeric_state
+      entity_id:
+        - sensor.medication_aspirin
+        - sensor.medication_vitamin_d
+        - sensor.medication_blood_pressure_medication
+      below: 1
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "🔴 Medication Out of Stock"
+        message: >
+          {{ state_attr(trigger.entity_id, 'medication_name') }} is OUT OF STOCK!
+          Contact {{ state_attr(trigger.entity_id, 'prescribing_doctor') }} immediately.
+        data:
+          priority: high
+          persistent: true
+
+# No refills left warning
+- id: medication_no_refills_warning
+  alias: "Medication No Refills Warning"
+  description: "Alert when medication has no refills remaining"
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.medication_aspirin
+        - sensor.medication_vitamin_d
+        - sensor.medication_blood_pressure_medication
+  condition:
+    - condition: template
+      value_template: >
+        {{ state_attr(trigger.entity_id, 'refills_left') | int == 0 and
+           state_attr(trigger.entity_id, 'days_remaining') | int <= 14 }}
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "📋 No Refills Remaining"
+        message: >
+          {{ state_attr(trigger.entity_id, 'medication_name') }} has no refills left.
+          {{ state_attr(trigger.entity_id, 'days_remaining') }} days remaining.
+          Contact {{ state_attr(trigger.entity_id, 'prescribing_doctor') }} for new prescription.
+
+# ============================================
+# TRACKING ACTIONS
+# ============================================
+
+# Handle "Mark as Taken" notification action
+- id: handle_took_morning_meds_action
+  alias: "Handle Took Morning Meds Action"
+  description: "Process the notification action when meds are marked as taken"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: TOOK_MORNING_MEDS
+  action:
+    - service: medication_tracker.take_dose
+      data:
+        medication_id: "aspirin"
+    - service: medication_tracker.take_dose
+      data:
+        medication_id: "vitamin_d"
+    - service: notify.mobile_app_phone
+      data:
+        message: "✅ Morning medications recorded"
+
+# ============================================
+# REFILL REMINDERS
+# ============================================
+
+# Weekly refill check
+- id: weekly_refill_check
+  alias: "Weekly Medication Refill Check"
+  description: "Check all medications weekly for refill needs"
+  trigger:
+    - platform: time
+      at: "09:00:00"
+    - platform: time
+      at: "monday"
+  condition:
+    - condition: time
+      weekday:
+        - mon
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "📅 Weekly Medication Review"
+        message: >
+          Aspirin: {{ state_attr('sensor.medication_aspirin', 'days_remaining') }} days left
+          Vitamin D: {{ state_attr('sensor.medication_vitamin_d', 'days_remaining') }} days left
+          BP Med: {{ state_attr('sensor.medication_blood_pressure_medication', 'days_remaining') }} days left
+
+# Remind to call doctor for refill
+- id: remind_call_doctor_refill
+  alias: "Remind to Call Doctor for Refill"
+  description: "Remind to call doctor when refills needed"
+  trigger:
+    - platform: time
+      at: "10:00:00"
+  condition:
+    - condition: template
+      value_template: >
+        {{ states.sensor | selectattr('entity_id', 'search', 'medication_') |
+           selectattr('attributes.refills_left', 'eq', 0) |
+           selectattr('attributes.days_remaining', 'le', 30) | list | count > 0 }}
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "📞 Call Doctor for Refills"
+        message: "You have medications that need prescription renewals"
+
+# ============================================
+# SCRIPTS FOR MANUAL TRACKING
+# ============================================
+
+script:
+  # Take all morning medications
+  take_morning_meds:
+    alias: "Take Morning Medications"
+    icon: mdi:pill
+    sequence:
+      - service: medication_tracker.take_dose
+        data:
+          medication_id: "aspirin"
+      - service: medication_tracker.take_dose
+        data:
+          medication_id: "vitamin_d"
+      - service: persistent_notification.create
+        data:
+          title: "Medications Taken"
+          message: "Morning medications recorded at {{ now().strftime('%I:%M %p') }}"
+  
+  # Take all evening medications
+  take_evening_meds:
+    alias: "Take Evening Medications"
+    icon: mdi:pill
+    sequence:
+      - service: medication_tracker.take_dose
+        data:
+          medication_id: "blood_pressure_medication"
+      - service: persistent_notification.create
+        data:
+          title: "Medications Taken"
+          message: "Evening medications recorded at {{ now().strftime('%I:%M %p') }}"
+  
+  # Record medication refill
+  record_medication_refill:
+    alias: "Record Medication Refill"
+    icon: mdi:package-variant
+    fields:
+      medication_id:
+        description: "Medication ID"
+        example: "aspirin"
+      pills:
+        description: "Number of pills"
+        example: 90
+    sequence:
+      - service: medication_tracker.refill
+        data:
+          medication_id: "{{ medication_id }}"
+          pills: "{{ pills }}"
+      - service: persistent_notification.create
+        data:
+          title: "Refill Recorded"
+          message: "{{ pills }} pills added to {{ medication_id }}"
+
+# ============================================
+# DASHBOARD HELPERS
+# ============================================
+
+# Track if morning meds were taken today
+input_boolean:
+  morning_meds_taken_today:
+    name: Morning Medications Taken Today
+    icon: mdi:pill
+
+# Reset daily tracker at midnight
+- id: reset_morning_meds_tracker
+  alias: "Reset Morning Meds Tracker"
+  trigger:
+    - platform: time
+      at: "00:00:01"
+  action:
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.morning_meds_taken_today
+
+# ============================================
+# DOCTOR UPDATES
+# ============================================
+
+# Notify when doctor is changed
+- id: doctor_change_notification
+  alias: "Doctor Change Notification"
+  description: "Send notification when prescribing doctor is updated"
+  trigger:
+    - platform: event
+      event_type: med_tracker_doctor_updated
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "🩺 Prescribing Doctor Updated"
+        message: >
+          {{ trigger.event.data.medication_name }}: 
+          {{ trigger.event.data.old_doctor }} → {{ trigger.event.data.new_doctor }}
+
+# Log doctor changes to logbook
+- id: log_doctor_changes
+  alias: "Log Doctor Changes"
+  description: "Record all doctor changes in the logbook"
+  trigger:
+    - platform: event
+      event_type: med_tracker_doctor_updated
+  action:
+    - service: logbook.log
+      data:
+        name: Doctor Updated
+        message: >
+          Prescribing doctor for {{ trigger.event.data.medication_name }} 
+          changed from {{ trigger.event.data.old_doctor }} 
+          to {{ trigger.event.data.new_doctor }}
+
+# Track doctor changes in a sensor
+template:
+  - trigger:
+      - platform: event
+        event_type: med_tracker_doctor_updated
+    sensor:
+      - name: Last Doctor Change
+        state: "{{ now().strftime('%Y-%m-%d %H:%M') }}"
+        attributes:
+          medication: "{{ trigger.event.data.medication_name }}"
+          old_doctor: "{{ trigger.event.data.old_doctor }}"
+          new_doctor: "{{ trigger.event.data.new_doctor }}"
+          medication_id: "{{ trigger.event.data.medication_id }}"
+
+# ============================================
+# DOCTOR UPDATE SCRIPTS
+# ============================================
+
+script:
+  # Generic script to update any medication's doctor
+  update_medication_doctor:
+    alias: Update Medication Doctor
+    icon: mdi:doctor
+    fields:
+      medication:
+        description: Medication ID (e.g., aspirin, vitamin_d)
+        example: aspirin
+      doctor:
+        description: New doctor's full name
+        example: Dr. Jane Smith
+    sequence:
+      - service: med_tracker.update_doctor
+        data:
+          medication_id: "{{ medication }}"
+          doctor_name: "{{ doctor }}"
+      - service: persistent_notification.create
+        data:
+          title: Doctor Updated
+          message: "Prescribing doctor updated to {{ doctor }}"
+  
+  # Update all medications to new primary care doctor
+  switch_all_to_new_primary_doctor:
+    alias: Switch All to New Primary Doctor
+    icon: mdi:doctor
+    fields:
+      doctor_name:
+        description: New primary care doctor's name
+        example: Dr. Jane Smith
+    sequence:
+      - service: med_tracker.update_doctor
+        data:
+          medication_id: aspirin
+          doctor_name: "{{ doctor_name }}"
+      - service: med_tracker.update_doctor
+        data:
+          medication_id: vitamin_d
+          doctor_name: "{{ doctor_name }}"
+      - service: med_tracker.update_doctor
+        data:
+          medication_id: blood_pressure_medication
+          doctor_name: "{{ doctor_name }}"
+      - service: notify.mobile_app_phone
+        data:
+          title: "Primary Care Doctor Updated"
+          message: "All medications now prescribed by {{ doctor_name }}"
+  
+  # Transfer specific medication to specialist
+  transfer_to_specialist:
+    alias: Transfer Medication to Specialist
+    icon: mdi:doctor
+    fields:
+      medication:
+        description: Medication ID
+        example: blood_pressure_medication
+      specialist_name:
+        description: Specialist doctor's name
+        example: Dr. Cardio Specialist
+    sequence:
+      - service: med_tracker.update_doctor
+        data:
+          medication_id: "{{ medication }}"
+          doctor_name: "{{ specialist_name }}"
+      - service: notify.mobile_app_phone
+        data:
+          title: "Care Transferred"
+          message: "{{ medication }} now managed by {{ specialist_name }}"
+
+# ============================================
+# STOCK UPDATES
+# ============================================
+
+# Notify when stock is manually adjusted
+- id: stock_adjustment_notification
+  alias: "Stock Adjustment Notification"
+  description: "Send notification when pill count is manually updated"
+  trigger:
+    - platform: event
+      event_type: marc_med_tracker_stock_updated
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "📦 Inventory Updated"
+        message: >
+          {{ trigger.event.data.medication_name }}: 
+          {{ trigger.event.data.old_stock }} → {{ trigger.event.data.new_stock }} pills
+          ({{ 'Added' if trigger.event.data.difference > 0 else 'Removed' }} 
+          {{ trigger.event.data.difference | abs }} pills)
+
+# Log all stock changes
+- id: log_stock_changes
+  alias: "Log Stock Changes"
+  description: "Record all manual stock adjustments in the logbook"
+  trigger:
+    - platform: event
+      event_type: marc_med_tracker_stock_updated
+  action:
+    - service: logbook.log
+      data:
+        name: Inventory Adjusted
+        message: >
+          {{ trigger.event.data.medication_name }}: 
+          {{ trigger.event.data.old_stock }} → {{ trigger.event.data.new_stock }} pills
+
+# Alert on large stock adjustments (potential errors)
+- id: alert_large_stock_adjustment
+  alias: "Alert on Large Stock Adjustment"
+  description: "Warn when stock changes by more than 10 pills manually"
+  trigger:
+    - platform: event
+      event_type: marc_med_tracker_stock_updated
+  condition:
+    - condition: template
+      value_template: "{{ trigger.event.data.difference | abs > 10 }}"
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "⚠️ Large Inventory Adjustment"
+        message: >
+          {{ trigger.event.data.medication_name }}: 
+          {{ trigger.event.data.difference | abs }} pill 
+          {{ 'increase' if trigger.event.data.difference > 0 else 'decrease' }}
+        data:
+          priority: high
+
+# Monthly inventory count reminder
+- id: monthly_inventory_reminder
+  alias: "Monthly Inventory Count Reminder"
+  description: "Remind to do a physical pill count on the first of each month"
+  trigger:
+    - platform: time
+      at: "09:00:00"
+  condition:
+    - condition: template
+      value_template: "{{ now().day == 1 }}"
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "📋 Monthly Inventory Check"
+        message: "Time to count your pills and update inventory if needed"
+        data:
+          actions:
+            - action: "OPEN_INVENTORY"
+              title: "Open Inventory"
+
+# Track stock adjustments in sensor
+template:
+  - trigger:
+      - platform: event
+        event_type: marc_med_tracker_stock_updated
+    sensor:
+      - name: Last Stock Adjustment
+        state: "{{ now().strftime('%Y-%m-%d %H:%M') }}"
+        attributes:
+          medication: "{{ trigger.event.data.medication_name }}"
+          old_stock: "{{ trigger.event.data.old_stock }}"
+          new_stock: "{{ trigger.event.data.new_stock }}"
+          difference: "{{ trigger.event.data.difference }}"
+
+# ============================================
+# STOCK UPDATE SCRIPTS
+# ============================================
+
+script:
+  # Update stock for any medication
+  update_pill_count:
+    alias: Update Pill Count
+    icon: mdi:counter
+    fields:
+      medication:
+        description: Medication ID (e.g., aspirin, vitamin_d)
+        example: aspirin
+      count:
+        description: Actual pill count
+        example: 45
+    sequence:
+      - service: marc_med_tracker.update_stock
+        data:
+          medication_id: "{{ medication }}"
+          pills: "{{ count }}"
+      - service: notify.mobile_app_phone
+        data:
+          title: "Inventory Updated"
+          message: "{{ medication | replace('_', ' ') | title }} count set to {{ count }} pills"
+  
+  # Report dropped/lost pills
+  report_pills_lost:
+    alias: Report Pills Lost
+    icon: mdi:pill-off
+    fields:
+      medication:
+        description: Medication ID
+        example: aspirin
+      amount_lost:
+        description: Number of pills lost
+        example: 3
+    sequence:
+      - service: marc_med_tracker.update_stock
+        data:
+          medication_id: "{{ medication }}"
+          pills: "{{ states('sensor.marc_med_' + medication) | int - amount_lost }}"
+      - service: notify.mobile_app_phone
+        data:
+          title: "💊 Pills Lost"
+          message: "{{ amount_lost }} {{ medication | replace('_', ' ') }} pills removed from inventory"
+  
+  # Combine bottles (merge counts)
+  combine_medication_bottles:
+    alias: Combine Medication Bottles
+    icon: mdi:bottle-tonic-plus
+    fields:
+      medication:
+        description: Medication ID
+        example: aspirin
+      total_counted:
+        description: Total pills after combining bottles
+        example: 85
+    sequence:
+      - service: marc_med_tracker.update_stock
+        data:
+          medication_id: "{{ medication }}"
+          pills: "{{ total_counted }}"
+      - service: persistent_notification.create
+        data:
+          title: "Bottles Combined"
+          message: "{{ medication | replace('_', ' ') | title }} inventory updated to {{ total_counted }} pills"

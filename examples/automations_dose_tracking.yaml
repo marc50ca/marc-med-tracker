@@ -1,0 +1,308 @@
+# Automations for Daily Dose Tracking Buttons
+# These work with the red/green buttons that reset daily
+
+# ============================================
+# DAILY RESET AUTOMATIONS
+# ============================================
+
+# Reset all dose trackers at midnight
+- id: reset_daily_dose_trackers
+  alias: "Reset Daily Dose Trackers"
+  description: "Reset all medication buttons to red (unchecked) at midnight"
+  trigger:
+    - platform: time
+      at: "00:00:01"
+  action:
+    - service: marc_med_tracker.uncheck_dose
+      data:
+        dose_id: morning
+    - service: marc_med_tracker.uncheck_dose
+      data:
+        dose_id: morning_puffer
+    - service: marc_med_tracker.uncheck_dose
+      data:
+        dose_id: lunch
+    - service: marc_med_tracker.uncheck_dose
+      data:
+        dose_id: evening
+    - service: marc_med_tracker.uncheck_dose
+      data:
+        dose_id: evening_puffer
+
+# ============================================
+# REMINDER AUTOMATIONS
+# ============================================
+
+# Morning medication reminder
+- id: morning_medication_reminder
+  alias: "Morning Medication Reminder"
+  description: "Remind to take morning medications if not yet taken"
+  trigger:
+    - platform: time
+      at: "08:00:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.marc_med_morning
+      state: "off"
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "☀️ Morning Medications"
+        message: "Time to take your morning pills and puffer"
+        data:
+          actions:
+            - action: "CHECK_MORNING_MEDS"
+              title: "Mark as Taken"
+            - action: "SNOOZE_10"
+              title: "Remind me in 10 min"
+
+# Lunch medication reminder
+- id: lunch_medication_reminder
+  alias: "Lunch Medication Reminder"
+  description: "Remind to take lunch medications if not yet taken"
+  trigger:
+    - platform: time
+      at: "12:00:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.marc_med_lunch
+      state: "off"
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "☀️ Lunch Medications"
+        message: "Time to take your lunch pills"
+        data:
+          actions:
+            - action: "CHECK_LUNCH_MEDS"
+              title: "Mark as Taken"
+
+# Evening medication reminder
+- id: evening_medication_reminder
+  alias: "Evening Medication Reminder"
+  description: "Remind to take evening medications if not yet taken"
+  trigger:
+    - platform: time
+      at: "20:00:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.marc_med_evening
+      state: "off"
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "🌙 Evening Medications"
+        message: "Time to take your evening pills and puffer"
+        data:
+          actions:
+            - action: "CHECK_EVENING_MEDS"
+              title: "Mark as Taken"
+
+# ============================================
+# NOTIFICATION ACTION HANDLERS
+# ============================================
+
+# Handle morning meds notification action
+- id: handle_check_morning_meds
+  alias: "Handle Check Morning Meds Action"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: CHECK_MORNING_MEDS
+  action:
+    - service: marc_med_tracker.check_off_dose
+      data:
+        dose_id: morning
+    - service: marc_med_tracker.check_off_dose
+      data:
+        dose_id: morning_puffer
+    - service: notify.mobile_app_phone
+      data:
+        message: "✅ Morning medications marked as taken"
+
+# Handle lunch meds notification action
+- id: handle_check_lunch_meds
+  alias: "Handle Check Lunch Meds Action"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: CHECK_LUNCH_MEDS
+  action:
+    - service: marc_med_tracker.check_off_dose
+      data:
+        dose_id: lunch
+    - service: notify.mobile_app_phone
+      data:
+        message: "✅ Lunch medications marked as taken"
+
+# Handle evening meds notification action
+- id: handle_check_evening_meds
+  alias: "Handle Check Evening Meds Action"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: CHECK_EVENING_MEDS
+  action:
+    - service: marc_med_tracker.check_off_dose
+      data:
+        dose_id: evening
+    - service: marc_med_tracker.check_off_dose
+      data:
+        dose_id: evening_puffer
+    - service: notify.mobile_app_phone
+      data:
+        message: "✅ Evening medications marked as taken"
+
+# ============================================
+# COMPLIANCE TRACKING
+# ============================================
+
+# Notify if any medications missed by end of day
+- id: missed_medications_alert
+  alias: "Missed Medications Alert"
+  description: "Alert if any medications were not taken by 11 PM"
+  trigger:
+    - platform: time
+      at: "23:00:00"
+  condition:
+    - condition: or
+      conditions:
+        - condition: state
+          entity_id: binary_sensor.marc_med_morning
+          state: "off"
+        - condition: state
+          entity_id: binary_sensor.marc_med_morning_puffer
+          state: "off"
+        - condition: state
+          entity_id: binary_sensor.marc_med_lunch
+          state: "off"
+        - condition: state
+          entity_id: binary_sensor.marc_med_evening
+          state: "off"
+        - condition: state
+          entity_id: binary_sensor.marc_med_evening_puffer
+          state: "off"
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "⚠️ Missed Medications"
+        message: |
+          You may have missed some medications today:
+          {% if is_state('binary_sensor.marc_med_morning', 'off') %}• Morning Pills
+          {% endif %}{% if is_state('binary_sensor.marc_med_morning_puffer', 'off') %}• Morning Puffer
+          {% endif %}{% if is_state('binary_sensor.marc_med_lunch', 'off') %}• Lunch Pills
+          {% endif %}{% if is_state('binary_sensor.marc_med_evening', 'off') %}• Evening Pills
+          {% endif %}{% if is_state('binary_sensor.marc_med_evening_puffer', 'off') %}• Evening Puffer
+          {% endif %}
+
+# Celebrate perfect compliance
+- id: perfect_medication_day
+  alias: "Perfect Medication Day"
+  description: "Celebrate when all medications are taken"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.marc_med_evening_puffer
+      to: "on"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.marc_med_morning
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.marc_med_morning_puffer
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.marc_med_lunch
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.marc_med_evening
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.marc_med_evening_puffer
+      state: "on"
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "🎉 Perfect Day!"
+        message: "Congratulations! You've taken all your medications today!"
+
+# ============================================
+# WEEKLY SUMMARY
+# ============================================
+
+# Weekly medication adherence summary
+- id: weekly_medication_summary
+  alias: "Weekly Medication Summary"
+  description: "Send a weekly summary of medication adherence"
+  trigger:
+    - platform: time
+      at: "09:00:00"
+  condition:
+    - condition: time
+      weekday:
+        - mon
+  action:
+    - service: notify.mobile_app_phone
+      data:
+        title: "📊 Weekly Medication Report"
+        message: "Check your Home Assistant dashboard for your weekly adherence summary"
+
+# ============================================
+# SCRIPT HELPERS
+# ============================================
+
+script:
+  # Quick script to mark all morning doses
+  check_all_morning_doses:
+    alias: "Check All Morning Doses"
+    icon: mdi:weather-sunset-up
+    sequence:
+      - service: marc_med_tracker.check_off_dose
+        data:
+          dose_id: morning
+      - service: marc_med_tracker.check_off_dose
+        data:
+          dose_id: morning_puffer
+      - service: persistent_notification.create
+        data:
+          title: "Morning Medications"
+          message: "✅ All morning medications marked as taken"
+  
+  # Quick script to mark all evening doses
+  check_all_evening_doses:
+    alias: "Check All Evening Doses"
+    icon: mdi:weather-sunset-down
+    sequence:
+      - service: marc_med_tracker.check_off_dose
+        data:
+          dose_id: evening
+      - service: marc_med_tracker.check_off_dose
+        data:
+          dose_id: evening_puffer
+      - service: persistent_notification.create
+        data:
+          title: "Evening Medications"
+          message: "✅ All evening medications marked as taken"
+  
+  # Reset all trackers (for testing or corrections)
+  reset_all_dose_trackers:
+    alias: "Reset All Dose Trackers"
+    icon: mdi:restart
+    sequence:
+      - service: marc_med_tracker.uncheck_dose
+        data:
+          dose_id: morning
+      - service: marc_med_tracker.uncheck_dose
+        data:
+          dose_id: morning_puffer
+      - service: marc_med_tracker.uncheck_dose
+        data:
+          dose_id: lunch
+      - service: marc_med_tracker.uncheck_dose
+        data:
+          dose_id: evening
+      - service: marc_med_tracker.uncheck_dose
+        data:
+          dose_id: evening_puffer

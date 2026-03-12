@@ -1,0 +1,506 @@
+title: 💊 Medication Dashboard
+path: medication-hub-simple
+icon: mdi:medical-bag
+theme: marc_med_tracker
+badges: []
+cards:
+  # ==========================================
+  # HEADER
+  # ==========================================
+  
+  - type: markdown
+    content: |
+      # 💊 Medication Management Center
+      ### {{ now().strftime('%A, %B %d, %Y at %I:%M %p') }}
+      
+      Track your medications, manage inventory, and never miss a dose
+    card_mod:
+      style: |
+        ha-card {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white !important;
+          border-radius: 15px;
+          padding: 20px;
+        }
+        ha-markdown {
+          color: white !important;
+        }
+
+  # ==========================================
+  # TODAY'S SCHEDULE
+  # ==========================================
+  
+  - type: markdown
+    content: |
+      ## 📅 Today's Medication Schedule
+  
+  - type: entities
+    title: "Morning & Daytime"
+    state_color: true
+    show_header_toggle: false
+    entities:
+      - entity: binary_sensor.marc_med_morning
+        name: "☀️ Morning Pills (8:00 AM)"
+        type: custom:multiple-entity-row
+        tap_action:
+          action: toggle
+        state_header: Status
+        secondary_info: last-changed
+      - entity: binary_sensor.marc_med_morning_puffer
+        name: "💨 Morning Puffer (8:00 AM)"
+        tap_action:
+          action: toggle
+        secondary_info: last-changed
+      - entity: binary_sensor.marc_med_lunch
+        name: "🌞 Lunch Pills (12:00 PM)"
+        tap_action:
+          action: toggle
+        secondary_info: last-changed
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 15px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+  
+  - type: entities
+    title: "Evening"
+    state_color: true
+    show_header_toggle: false
+    entities:
+      - entity: binary_sensor.marc_med_evening
+        name: "🌙 Evening Pills (8:00 PM)"
+        tap_action:
+          action: toggle
+        secondary_info: last-changed
+      - entity: binary_sensor.marc_med_evening_puffer
+        name: "💨 Evening Puffer (8:00 PM)"
+        tap_action:
+          action: toggle
+        secondary_info: last-changed
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 15px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+  
+  # Progress card
+  - type: markdown
+    content: |
+      {% set taken = [
+        states('binary_sensor.marc_med_morning'),
+        states('binary_sensor.marc_med_morning_puffer'),
+        states('binary_sensor.marc_med_lunch'),
+        states('binary_sensor.marc_med_evening'),
+        states('binary_sensor.marc_med_evening_puffer')
+      ] | select('eq', 'on') | list | count %}
+      {% set percent = (taken / 5 * 100) | round(0) %}
+      
+      <div style="text-align: center; padding: 25px; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        <h1 style="margin: 0; font-size: 48px;">{{ percent }}%</h1>
+        <h3 style="margin: 10px 0;">{{ taken }} of 5 doses taken today</h3>
+        {% if percent == 100 %}
+        <p style="margin: 15px 0; font-size: 28px;">🎉 Perfect adherence!</p>
+        {% elif percent >= 60 %}
+        <p style="margin: 15px 0; font-size: 24px;">👍 Keep going!</p>
+        {% elif percent > 0 %}
+        <p style="margin: 15px 0; font-size: 24px;">⏰ {{ 5 - taken }} more to go</p>
+        {% else %}
+        <p style="margin: 15px 0; font-size: 24px;">💊 Ready to start</p>
+        {% endif %}
+      </div>
+
+  # ==========================================
+  # MEDICATION INVENTORY
+  # ==========================================
+  
+  - type: markdown
+    content: |
+      ## 📦 Medication Inventory
+
+  - type: glance
+    title: Quick Overview
+    columns: 3
+    state_color: true
+    entities:
+      - entity: sensor.marc_med_aspirin
+        name: Aspirin
+      - entity: sensor.marc_med_vitamin_d
+        name: Vitamin D
+      - entity: sensor.marc_med_blood_pressure_medication
+        name: BP Med
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 15px;
+        }
+
+  # Detailed medication cards
+  - type: entities
+    title: 💊 Aspirin 100mg
+    state_color: true
+    show_header_toggle: false
+    entities:
+      - entity: sensor.marc_med_aspirin
+        name: Pills Remaining
+        icon: mdi:pill-multiple
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: days_remaining
+        name: Days Remaining
+        suffix: " days"
+        icon: mdi:calendar-clock
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: status
+        name: Status
+        icon: mdi:information
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: refills_left
+        name: Refills Available
+        icon: mdi:package-variant
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: prescribing_doctor
+        name: Prescribing Doctor
+        icon: mdi:doctor
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: last_refilled
+        name: Last Refilled
+        icon: mdi:calendar-check
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 15px;
+          background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+        }
+
+  - type: entities
+    title: 💊 Vitamin D 2000 IU
+    state_color: true
+    show_header_toggle: false
+    entities:
+      - entity: sensor.marc_med_vitamin_d
+        name: Pills Remaining
+        icon: mdi:pill-multiple
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: days_remaining
+        name: Days Remaining
+        suffix: " days"
+        icon: mdi:calendar-clock
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: status
+        name: Status
+        icon: mdi:information
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: refills_left
+        name: Refills Available
+        icon: mdi:package-variant
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: prescribing_doctor
+        name: Prescribing Doctor
+        icon: mdi:doctor
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: last_refilled
+        name: Last Refilled
+        icon: mdi:calendar-check
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 15px;
+          background: linear-gradient(135deg, #fff3e0 0%, #fff 100%);
+        }
+
+  - type: entities
+    title: 💊 Blood Pressure Medication 10mg
+    state_color: true
+    show_header_toggle: false
+    entities:
+      - entity: sensor.marc_med_blood_pressure_medication
+        name: Pills Remaining
+        icon: mdi:pill-multiple
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: days_remaining
+        name: Days Remaining
+        suffix: " days"
+        icon: mdi:calendar-clock
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: status
+        name: Status
+        icon: mdi:information
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: refills_left
+        name: Refills Available
+        icon: mdi:package-variant
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: prescribing_doctor
+        name: Prescribing Doctor
+        icon: mdi:doctor
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: last_refilled
+        name: Last Refilled
+        icon: mdi:calendar-check
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 15px;
+          background: linear-gradient(135deg, #f3e5f5 0%, #fff 100%);
+        }
+
+  # ==========================================
+  # ALERTS
+  # ==========================================
+  
+  - type: markdown
+    title: ⚠️ Active Alerts
+    content: |
+      {% set ns = namespace(has_alerts=false) %}
+      
+      {% for entity in states.sensor if 'marc_med_' in entity.entity_id %}
+        {% set status = state_attr(entity.entity_id, 'status') %}
+        {% set days = state_attr(entity.entity_id, 'days_remaining') | int %}
+        {% set name = state_attr(entity.entity_id, 'medication_name') %}
+        {% set doctor = state_attr(entity.entity_id, 'prescribing_doctor') %}
+        
+        {% if status in ['CRITICAL', 'LOW', 'OUT_OF_STOCK', 'NO_REFILLS_LEFT'] %}
+          {% set ns.has_alerts = true %}
+          
+          {% if status == 'OUT_OF_STOCK' %}
+      <div style="padding: 15px; margin: 10px 0; background: #ffebee; border-left: 5px solid #f44336; border-radius: 8px;">
+        <h3 style="color: #c62828; margin: 0 0 5px 0;">🔴 {{ name }} - OUT OF STOCK</h3>
+        <p style="margin: 5px 0;"><strong>Action Required:</strong> Contact {{ doctor }} immediately</p>
+      </div>
+          {% elif status == 'CRITICAL' %}
+      <div style="padding: 15px; margin: 10px 0; background: #fff3e0; border-left: 5px solid #ff9800; border-radius: 8px;">
+        <h3 style="color: #e65100; margin: 0 0 5px 0;">🟠 {{ name }} - CRITICAL</h3>
+        <p style="margin: 5px 0;">Only {{ days }} days remaining ({{ states(entity.entity_id) }} pills)</p>
+        <p style="margin: 5px 0;"><strong>Action Required:</strong> Request refill immediately</p>
+      </div>
+          {% elif status == 'LOW' %}
+      <div style="padding: 15px; margin: 10px 0; background: #fff9c4; border-left: 5px solid #fbc02d; border-radius: 8px;">
+        <h3 style="color: #f57f17; margin: 0 0 5px 0;">🟡 {{ name }} - Running Low</h3>
+        <p style="margin: 5px 0;">{{ days }} days remaining ({{ states(entity.entity_id) }} pills)</p>
+        <p style="margin: 5px 0;"><strong>Action Recommended:</strong> Request refill soon</p>
+      </div>
+          {% elif status == 'NO_REFILLS_LEFT' %}
+      <div style="padding: 15px; margin: 10px 0; background: #e1bee7; border-left: 5px solid #9c27b0; border-radius: 8px;">
+        <h3 style="color: #6a1b9a; margin: 0 0 5px 0;">🟣 {{ name }} - No Refills</h3>
+        <p style="margin: 5px 0;">{{ states(entity.entity_id) }} pills remaining, no refills available</p>
+        <p style="margin: 5px 0;"><strong>Action Required:</strong> Contact {{ doctor }} for new prescription</p>
+      </div>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      
+      {% if not ns.has_alerts %}
+      <div style="padding: 20px; text-align: center; background: #e8f5e9; border-left: 5px solid #4caf50; border-radius: 8px;">
+        <h3 style="color: #2e7d32; margin: 0;">✅ All Medications in Good Standing</h3>
+        <p style="margin: 10px 0; color: #1b5e20;">No immediate action required</p>
+      </div>
+      {% endif %}
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 15px;
+        }
+
+  # ==========================================
+  # REFILL SCHEDULE
+  # ==========================================
+  
+  - type: markdown
+    title: 📅 Upcoming Refills
+    content: |
+      ### Next 30 Days
+      
+      {% for entity in states.sensor if 'marc_med_' in entity.entity_id %}
+      {% set days = state_attr(entity.entity_id, 'days_remaining') | int %}
+      {% if days > 0 and days <= 30 %}
+      {% set refill_date = (now().timestamp() + (days * 86400)) | timestamp_custom('%B %d, %Y') %}
+      {% set dow = (now().timestamp() + (days * 86400)) | timestamp_custom('%A') %}
+      {% set name = state_attr(entity.entity_id, 'medication_name') %}
+      {% set doctor = state_attr(entity.entity_id, 'prescribing_doctor') %}
+      {% set refills = state_attr(entity.entity_id, 'refills_left') %}
+      
+      <div style="padding: 15px; margin: 10px 0; {% if days <= 7 %}background: #fff3cd;{% elif days <= 14 %}background: #d1ecf1;{% else %}background: #d4edda;{% endif %} border-left: 5px solid {% if days <= 7 %}#ffc107;{% elif days <= 14 %}#17a2b8;{% else %}#28a745;{% endif %} border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3 style="margin: 0 0 10px 0; {% if days <= 7 %}color: #856404;{% elif days <= 14 %}color: #0c5460;{% else %}color: #155724;{% endif %}">{{ name }}</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 5px 0;"><strong>📅 Refill Date:</strong></td>
+            <td style="padding: 5px 0;">{{ dow }}, {{ refill_date }}</td>
+          </tr>
+          <tr>
+            <td style="padding: 5px 0;"><strong>⏰ Days Until:</strong></td>
+            <td style="padding: 5px 0;">{{ days }} days</td>
+          </tr>
+          <tr>
+            <td style="padding: 5px 0;"><strong>💊 Pills Left:</strong></td>
+            <td style="padding: 5px 0;">{{ states(entity.entity_id) }} pills</td>
+          </tr>
+          <tr>
+            <td style="padding: 5px 0;"><strong>🔄 Refills:</strong></td>
+            <td style="padding: 5px 0;">{{ refills }} available</td>
+          </tr>
+          <tr>
+            <td style="padding: 5px 0;"><strong>👨‍⚕️ Doctor:</strong></td>
+            <td style="padding: 5px 0;">{{ doctor }}</td>
+          </tr>
+        </table>
+      </div>
+      {% endif %}
+      {% endfor %}
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 15px;
+        }
+
+  # ==========================================
+  # PRESCRIBING DOCTORS
+  # ==========================================
+  
+  - type: markdown
+    title: 👨‍⚕️ Prescribing Physicians
+    content: |
+      {% set doctors = namespace(list=[]) %}
+      {% for entity in states.sensor if 'marc_med_' in entity.entity_id %}
+        {% set doctor = state_attr(entity.entity_id, 'prescribing_doctor') %}
+        {% if doctor not in doctors.list %}
+          {% set doctors.list = doctors.list + [doctor] %}
+      
+      <div style="padding: 20px; margin: 10px 0; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 12px; border-left: 5px solid #2196F3; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <h2 style="margin: 0 0 15px 0; color: #1976D2;">{{ doctor }}</h2>
+        
+        <strong style="font-size: 16px;">Medications Prescribed:</strong>
+        
+        <table style="width: 100%; margin-top: 10px; border-collapse: collapse;">
+      {% for med in states.sensor if 'marc_med_' in med.entity_id and state_attr(med.entity_id, 'prescribing_doctor') == doctor %}
+          <tr style="border-bottom: 1px solid #90caf9;">
+            <td style="padding: 10px 5px;">
+              <strong style="color: #1565C0;">{{ state_attr(med.entity_id, 'medication_name') }}</strong>
+              <span style="color: #424242;">{{ state_attr(med.entity_id, 'strength') }}</span>
+            </td>
+            <td style="padding: 10px 5px; text-align: right;">
+              <span style="{% if state_attr(med.entity_id, 'status') == 'OK' %}color: #2e7d32;{% elif state_attr(med.entity_id, 'status') == 'LOW' %}color: #f57f17;{% else %}color: #c62828;{% endif %} font-weight: bold;">
+                {{ states(med.entity_id) }} pills
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" style="padding: 0 5px 10px 5px; font-size: 13px; color: #616161;">
+              {{ state_attr(med.entity_id, 'days_remaining') }} days remaining • 
+              Status: {{ state_attr(med.entity_id, 'status') }} • 
+              {{ state_attr(med.entity_id, 'refills_left') }} refills
+            </td>
+          </tr>
+      {% endfor %}
+        </table>
+      </div>
+        {% endif %}
+      {% endfor %}
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 15px;
+        }
+
+  # ==========================================
+  # ADHERENCE CHART
+  # ==========================================
+  
+  - type: history-graph
+    title: 📊 7-Day Medication Adherence
+    hours_to_show: 168
+    refresh_interval: 3600
+    entities:
+      - entity: binary_sensor.marc_med_morning
+        name: Morning
+      - entity: binary_sensor.marc_med_lunch
+        name: Lunch
+      - entity: binary_sensor.marc_med_evening
+        name: Evening
+      - entity: binary_sensor.marc_med_morning_puffer
+        name: AM Puffer
+      - entity: binary_sensor.marc_med_evening_puffer
+        name: PM Puffer
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 15px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+  # ==========================================
+  # QUICK ACTIONS
+  # ==========================================
+  
+  - type: markdown
+    content: |
+      ## ⚡ Quick Actions
+  
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: Morning Meds
+        icon: mdi:weather-sunset-up
+        icon_height: 40px
+        tap_action:
+          action: call-service
+          service: marc_med_tracker.check_off_dose
+          service_data:
+            dose_id: morning
+        card_mod:
+          style: |
+            ha-card {
+              background: linear-gradient(135deg, #FF6B6B 0%, #C44569 100%);
+              color: white;
+              border-radius: 15px;
+              height: 100px;
+            }
+      
+      - type: button
+        name: Evening Meds
+        icon: mdi:weather-sunset-down
+        icon_height: 40px
+        tap_action:
+          action: call-service
+          service: marc_med_tracker.check_off_dose
+          service_data:
+            dose_id: evening
+        card_mod:
+          style: |
+            ha-card {
+              background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+              color: white;
+              border-radius: 15px;
+              height: 100px;
+            }
+      
+      - type: button
+        name: View History
+        icon: mdi:history
+        icon_height: 40px
+        tap_action:
+          action: navigate
+          navigation_path: /history
+        card_mod:
+          style: |
+            ha-card {
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              color: white;
+              border-radius: 15px;
+              height: 100px;
+            }

@@ -1,0 +1,9 @@
+{
+  "name": "Marc Med Tracker",
+  "content_in_root": true,
+  "render_readme": true,
+  "domains": ["marc_med_tracker"],
+  "country": ["US", "CA", "GB", "AU", "NZ"],
+  "homeassistant": "2024.1.0",
+  "iot_class": "calculated"
+}

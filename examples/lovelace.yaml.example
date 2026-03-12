@@ -1,0 +1,269 @@
+# Example Lovelace Dashboard for Medication Tracker
+# You can add this as a new view in your dashboard
+
+title: Medications
+path: medications
+icon: mdi:pill
+badges: []
+cards:
+  # ============================================
+  # OVERVIEW CARDS
+  # ============================================
+  
+  # Status Overview
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: |
+          # 💊 Medication Tracker
+          Track your medications, refills, and inventory
+      
+      # Quick Stats
+      - type: horizontal-stack
+        cards:
+          - type: entity
+            entity: sensor.medication_aspirin
+            name: Aspirin
+            icon: mdi:pill
+          - type: entity
+            entity: sensor.medication_vitamin_d
+            name: Vitamin D
+            icon: mdi:pill
+          - type: entity
+            entity: sensor.medication_blood_pressure_medication
+            name: BP Med
+            icon: mdi:pill
+  
+  # ============================================
+  # DETAILED MEDICATION CARDS
+  # ============================================
+  
+  # Aspirin Details
+  - type: entities
+    title: 💊 Aspirin
+    state_color: true
+    entities:
+      - entity: sensor.medication_aspirin
+        name: Pills Remaining
+        icon: mdi:pill-multiple
+      - type: attribute
+        entity: sensor.medication_aspirin
+        attribute: strength
+        name: Strength
+      - type: attribute
+        entity: sensor.medication_aspirin
+        attribute: days_remaining
+        name: Days Remaining
+        suffix: days
+      - type: attribute
+        entity: sensor.medication_aspirin
+        attribute: refills_left
+        name: Refills Left
+      - type: attribute
+        entity: sensor.medication_aspirin
+        attribute: prescribing_doctor
+        name: Doctor
+      - type: attribute
+        entity: sensor.medication_aspirin
+        attribute: last_refilled
+        name: Last Refilled
+      - type: attribute
+        entity: sensor.medication_aspirin
+        attribute: status
+        name: Status
+      - type: divider
+      - type: button
+        name: Take Dose
+        icon: mdi:check-circle
+        action_row:
+          action: call-service
+          service: medication_tracker.take_dose
+          service_data:
+            medication_id: aspirin
+  
+  # Vitamin D Details
+  - type: entities
+    title: 💊 Vitamin D
+    state_color: true
+    entities:
+      - entity: sensor.medication_vitamin_d
+        name: Pills Remaining
+        icon: mdi:pill-multiple
+      - type: attribute
+        entity: sensor.medication_vitamin_d
+        attribute: strength
+        name: Strength
+      - type: attribute
+        entity: sensor.medication_vitamin_d
+        attribute: days_remaining
+        name: Days Remaining
+        suffix: days
+      - type: attribute
+        entity: sensor.medication_vitamin_d
+        attribute: refills_left
+        name: Refills Left
+      - type: attribute
+        entity: sensor.medication_vitamin_d
+        attribute: prescribing_doctor
+        name: Doctor
+      - type: attribute
+        entity: sensor.medication_vitamin_d
+        attribute: last_refilled
+        name: Last Refilled
+      - type: attribute
+        entity: sensor.medication_vitamin_d
+        attribute: status
+        name: Status
+  
+  # Blood Pressure Medication Details
+  - type: entities
+    title: 💊 Blood Pressure Medication
+    state_color: true
+    entities:
+      - entity: sensor.medication_blood_pressure_medication
+        name: Pills Remaining
+        icon: mdi:pill-multiple
+      - type: attribute
+        entity: sensor.medication_blood_pressure_medication
+        attribute: strength
+        name: Strength
+      - type: attribute
+        entity: sensor.medication_blood_pressure_medication
+        attribute: days_remaining
+        name: Days Remaining
+        suffix: days
+      - type: attribute
+        entity: sensor.medication_blood_pressure_medication
+        attribute: refills_left
+        name: Refills Left
+      - type: attribute
+        entity: sensor.medication_blood_pressure_medication
+        attribute: prescribing_doctor
+        name: Doctor
+      - type: attribute
+        entity: sensor.medication_blood_pressure_medication
+        attribute: last_refilled
+        name: Last Refilled
+      - type: attribute
+        entity: sensor.medication_blood_pressure_medication
+        attribute: status
+        name: Status
+  
+  # ============================================
+  # ACTION BUTTONS
+  # ============================================
+  
+  - type: horizontal-stack
+    title: Quick Actions
+    cards:
+      - type: button
+        name: Morning Meds
+        icon: mdi:weather-sunset-up
+        tap_action:
+          action: call-service
+          service: script.take_morning_meds
+      - type: button
+        name: Evening Meds
+        icon: mdi:weather-sunset-down
+        tap_action:
+          action: call-service
+          service: script.take_evening_meds
+  
+  # ============================================
+  # ALERTS CARD
+  # ============================================
+  
+  - type: markdown
+    title: ⚠️ Alerts
+    content: |
+      {% set ns = namespace(alerts=[]) %}
+      {% for entity in states.sensor if 'medication_' in entity.entity_id %}
+        {% if state_attr(entity.entity_id, 'needs_refill') %}
+          {% set ns.alerts = ns.alerts + ['🔴 ' + state_attr(entity.entity_id, 'medication_name') + ' needs refill (' + state_attr(entity.entity_id, 'days_remaining')|string + ' days left)'] %}
+        {% endif %}
+        {% if state_attr(entity.entity_id, 'out_of_stock') %}
+          {% set ns.alerts = ns.alerts + ['🚨 ' + state_attr(entity.entity_id, 'medication_name') + ' is OUT OF STOCK'] %}
+        {% endif %}
+        {% if state_attr(entity.entity_id, 'refills_left') == 0 %}
+          {% set ns.alerts = ns.alerts + ['📋 ' + state_attr(entity.entity_id, 'medication_name') + ' has no refills left'] %}
+        {% endif %}
+      {% endfor %}
+      {% if ns.alerts|length > 0 %}
+        {{ ns.alerts|join('\n\n') }}
+      {% else %}
+        ✅ All medications are in good standing
+      {% endif %}
+  
+  # ============================================
+  # GLANCE CARD
+  # ============================================
+  
+  - type: glance
+    title: Medication Status
+    columns: 3
+    entities:
+      - entity: sensor.medication_aspirin
+        name: Aspirin
+      - entity: sensor.medication_vitamin_d
+        name: Vitamin D
+      - entity: sensor.medication_blood_pressure_medication
+        name: BP Med
+  
+  # ============================================
+  # HISTORY GRAPH
+  # ============================================
+  
+  - type: history-graph
+    title: Medication Inventory Levels
+    hours_to_show: 168
+    entities:
+      - entity: sensor.medication_aspirin
+        name: Aspirin
+      - entity: sensor.medication_vitamin_d
+        name: Vitamin D
+      - entity: sensor.medication_blood_pressure_medication
+        name: BP Med
+
+# ============================================
+# ALTERNATIVE COMPACT VIEW
+# ============================================
+
+# For a more compact dashboard, you can use this instead:
+
+# - type: custom:auto-entities
+#   card:
+#     type: entities
+#     title: All Medications
+#   filter:
+#     include:
+#       - entity_id: "sensor.medication_*"
+#         options:
+#           type: custom:multiple-entity-row
+#           secondary_info: last-changed
+#           entities:
+#             - attribute: days_remaining
+#               name: Days
+#               suffix: d
+#             - attribute: refills_left
+#               name: Refills
+#   sort:
+#     method: attribute
+#     attribute: days_remaining
+#     numeric: true
+
+# ============================================
+# CONDITIONAL CARDS (Show only when needed)
+# ============================================
+
+# Show this card only when medications need refills
+# - type: conditional
+#   conditions:
+#     - entity: sensor.medication_aspirin
+#       state_not: "0"
+#       attribute: needs_refill
+#       state: true
+#   card:
+#     type: markdown
+#     content: |
+#       ## ⚠️ Refill Needed
+#       Your Aspirin needs to be refilled soon!

@@ -1,0 +1,147 @@
+# Simple Daily Dose Tracker Dashboard (No Custom Cards Required)
+# Uses built-in Home Assistant components with custom CSS styling
+
+title: Daily Meds
+path: daily-meds-simple
+icon: mdi:pill-multiple
+badges: []
+cards:
+  # ============================================
+  # MAIN DOSE TRACKER
+  # ============================================
+  
+  - type: markdown
+    content: |
+      # 📅 Today's Medication Checklist
+      ### {{ now().strftime('%A, %B %d, %Y') }}
+      
+      Tap to mark as taken • Automatically resets at midnight
+  
+  # Pills and Puffers - Using Entity Cards with Tap Actions
+  - type: entities
+    title: Morning
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - entity: binary_sensor.marc_med_morning
+        name: Morning Pills
+        icon: mdi:pill-multiple
+        tap_action:
+          action: toggle
+      - entity: binary_sensor.marc_med_morning_puffer
+        name: Morning Puffer
+        icon: mdi:spray
+        tap_action:
+          action: toggle
+  
+  - type: entity
+    entity: binary_sensor.marc_med_lunch
+    name: Lunch Pills
+    icon: mdi:pill-multiple
+    state_color: true
+    tap_action:
+      action: toggle
+  
+  - type: entities
+    title: Evening
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - entity: binary_sensor.marc_med_evening
+        name: Evening Pills
+        icon: mdi:pill-multiple
+        tap_action:
+          action: toggle
+      - entity: binary_sensor.marc_med_evening_puffer
+        name: Evening Puffer
+        icon: mdi:spray
+        tap_action:
+          action: toggle
+  
+  # ============================================
+  # PROGRESS TRACKER
+  # ============================================
+  
+  - type: markdown
+    content: |
+      {% set morning = states('binary_sensor.marc_med_morning') == 'on' %}
+      {% set morning_puffer = states('binary_sensor.marc_med_morning_puffer') == 'on' %}
+      {% set lunch = states('binary_sensor.marc_med_lunch') == 'on' %}
+      {% set evening = states('binary_sensor.marc_med_evening') == 'on' %}
+      {% set evening_puffer = states('binary_sensor.marc_med_evening_puffer') == 'on' %}
+      {% set total = morning|int + morning_puffer|int + lunch|int + evening|int + evening_puffer|int %}
+      
+      ## Today's Progress
+      
+      ### {{ total }} of 5 Complete
+      
+      ---
+      
+      | Time | Medication | Status | Taken At |
+      |------|-----------|--------|----------|
+      | 🌅 Morning | Pills | {{ '✅ Taken' if morning else '⏰ Pending' }} | {{ state_attr('binary_sensor.marc_med_morning', 'taken_at') if morning else '-' }} |
+      | 🌅 Morning | Puffer | {{ '✅ Used' if morning_puffer else '⏰ Pending' }} | {{ state_attr('binary_sensor.marc_med_morning_puffer', 'taken_at') if morning_puffer else '-' }} |
+      | ☀️ Lunch | Pills | {{ '✅ Taken' if lunch else '⏰ Pending' }} | {{ state_attr('binary_sensor.marc_med_lunch', 'taken_at') if lunch else '-' }} |
+      | 🌙 Evening | Pills | {{ '✅ Taken' if evening else '⏰ Pending' }} | {{ state_attr('binary_sensor.marc_med_evening', 'taken_at') if evening else '-' }} |
+      | 🌙 Evening | Puffer | {{ '✅ Used' if evening_puffer else '⏰ Pending' }} | {{ state_attr('binary_sensor.marc_med_evening_puffer', 'taken_at') if evening_puffer else '-' }} |
+      
+      ---
+      
+      {% if total == 5 %}
+      ## 🎉 Perfect! All Done Today!
+      {% elif total == 0 %}
+      ## ⏰ Don't Forget Your Medications
+      {% else %}
+      ## 📋 {{ 5 - total }} More To Go
+      {% endif %}
+  
+  # ============================================
+  # QUICK GLANCE VIEW
+  # ============================================
+  
+  - type: glance
+    title: Quick View
+    columns: 5
+    show_name: true
+    show_state: false
+    state_color: true
+    entities:
+      - entity: binary_sensor.marc_med_morning
+        name: Morning Pills
+        tap_action:
+          action: toggle
+      - entity: binary_sensor.marc_med_morning_puffer
+        name: Puffer
+        tap_action:
+          action: toggle
+      - entity: binary_sensor.marc_med_lunch
+        name: Lunch Pills
+        tap_action:
+          action: toggle
+      - entity: binary_sensor.marc_med_evening
+        name: Evening Pills
+        tap_action:
+          action: toggle
+      - entity: binary_sensor.marc_med_evening_puffer
+        name: Puffer
+        tap_action:
+          action: toggle
+
+  # ============================================
+  # WEEKLY HISTORY
+  # ============================================
+  
+  - type: history-graph
+    title: 7-Day Adherence History
+    hours_to_show: 168
+    entities:
+      - entity: binary_sensor.marc_med_morning
+        name: Morning Pills
+      - entity: binary_sensor.marc_med_morning_puffer
+        name: Morning Puffer
+      - entity: binary_sensor.marc_med_lunch
+        name: Lunch Pills
+      - entity: binary_sensor.marc_med_evening
+        name: Evening Pills
+      - entity: binary_sensor.marc_med_evening_puffer
+        name: Evening Puffer

@@ -1,0 +1,336 @@
+# Daily Dose Tracker Dashboard
+# This dashboard shows visual buttons that change from red to green when checked off
+
+title: Daily Medication Tracker
+path: daily-meds
+icon: mdi:calendar-check
+badges: []
+cards:
+  # ============================================
+  # DAILY DOSE CHECKLIST - VISUAL BUTTONS
+  # ============================================
+  
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: |
+          # 📅 Today's Medication Checklist
+          {{ now().strftime('%A, %B %d, %Y') }}
+          
+          **Tap buttons to mark as taken** - Red = Not taken | Green = Taken ✓
+      
+      # Morning Section
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            entity: binary_sensor.marc_med_morning
+            name: Morning Pills
+            icon: mdi:weather-sunset-up
+            show_state: false
+            tap_action:
+              action: call-service
+              service: marc_med_tracker.check_off_dose
+              service_data:
+                dose_id: morning
+            hold_action:
+              action: call-service
+              service: marc_med_tracker.uncheck_dose
+              service_data:
+                dose_id: morning
+            styles:
+              card:
+                - height: 100px
+                - border-radius: 10px
+              name:
+                - font-size: 14px
+                - font-weight: bold
+              icon:
+                - width: 40px
+              state:
+                - font-size: 12px
+            state:
+              - value: 'on'
+                styles:
+                  card:
+                    - background-color: '#4CAF50'
+                    - border: 3px solid '#45a049'
+                  icon:
+                    - color: white
+                  name:
+                    - color: white
+              - value: 'off'
+                styles:
+                  card:
+                    - background-color: '#f44336'
+                    - border: 3px solid '#da190b'
+                  icon:
+                    - color: white
+                  name:
+                    - color: white
+          
+          - type: custom:button-card
+            entity: binary_sensor.marc_med_morning_puffer
+            name: Morning Puffer
+            icon: mdi:spray
+            show_state: false
+            tap_action:
+              action: call-service
+              service: marc_med_tracker.check_off_dose
+              service_data:
+                dose_id: morning_puffer
+            hold_action:
+              action: call-service
+              service: marc_med_tracker.uncheck_dose
+              service_data:
+                dose_id: morning_puffer
+            styles:
+              card:
+                - height: 100px
+                - border-radius: 10px
+              name:
+                - font-size: 14px
+                - font-weight: bold
+              icon:
+                - width: 40px
+            state:
+              - value: 'on'
+                styles:
+                  card:
+                    - background-color: '#4CAF50'
+                    - border: 3px solid '#45a049'
+                  icon:
+                    - color: white
+                  name:
+                    - color: white
+              - value: 'off'
+                styles:
+                  card:
+                    - background-color: '#f44336'
+                    - border: 3px solid '#da190b'
+                  icon:
+                    - color: white
+                  name:
+                    - color: white
+      
+      # Lunch Section
+      - type: custom:button-card
+        entity: binary_sensor.marc_med_lunch
+        name: Lunch Pills
+        icon: mdi:weather-sunny
+        show_state: false
+        tap_action:
+          action: call-service
+          service: marc_med_tracker.check_off_dose
+          service_data:
+            dose_id: lunch
+        hold_action:
+          action: call-service
+          service: marc_med_tracker.uncheck_dose
+          service_data:
+            dose_id: lunch
+        styles:
+          card:
+            - height: 100px
+            - border-radius: 10px
+          name:
+            - font-size: 14px
+            - font-weight: bold
+          icon:
+            - width: 40px
+        state:
+          - value: 'on'
+            styles:
+              card:
+                - background-color: '#4CAF50'
+                - border: 3px solid '#45a049'
+              icon:
+                - color: white
+              name:
+                - color: white
+          - value: 'off'
+            styles:
+              card:
+                - background-color: '#f44336'
+                - border: 3px solid '#da190b'
+              icon:
+                - color: white
+              name:
+                - color: white
+      
+      # Evening Section
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            entity: binary_sensor.marc_med_evening
+            name: Evening Pills
+            icon: mdi:weather-sunset-down
+            show_state: false
+            tap_action:
+              action: call-service
+              service: marc_med_tracker.check_off_dose
+              service_data:
+                dose_id: evening
+            hold_action:
+              action: call-service
+              service: marc_med_tracker.uncheck_dose
+              service_data:
+                dose_id: evening
+            styles:
+              card:
+                - height: 100px
+                - border-radius: 10px
+              name:
+                - font-size: 14px
+                - font-weight: bold
+              icon:
+                - width: 40px
+            state:
+              - value: 'on'
+                styles:
+                  card:
+                    - background-color: '#4CAF50'
+                    - border: 3px solid '#45a049'
+                  icon:
+                    - color: white
+                  name:
+                    - color: white
+              - value: 'off'
+                styles:
+                  card:
+                    - background-color: '#f44336'
+                    - border: 3px solid '#da190b'
+                  icon:
+                    - color: white
+                  name:
+                    - color: white
+          
+          - type: custom:button-card
+            entity: binary_sensor.marc_med_evening_puffer
+            name: Evening Puffer
+            icon: mdi:spray
+            show_state: false
+            tap_action:
+              action: call-service
+              service: marc_med_tracker.check_off_dose
+              service_data:
+                dose_id: evening_puffer
+            hold_action:
+              action: call-service
+              service: marc_med_tracker.uncheck_dose
+              service_data:
+                dose_id: evening_puffer
+            styles:
+              card:
+                - height: 100px
+                - border-radius: 10px
+              name:
+                - font-size: 14px
+                - font-weight: bold
+              icon:
+                - width: 40px
+            state:
+              - value: 'on'
+                styles:
+                  card:
+                    - background-color: '#4CAF50'
+                    - border: 3px solid '#45a049'
+                  icon:
+                    - color: white
+                  name:
+                    - color: white
+              - value: 'off'
+                styles:
+                  card:
+                    - background-color: '#f44336'
+                    - border: 3px solid '#da190b'
+                  icon:
+                    - color: white
+                  name:
+                    - color: white
+      
+      # Status Summary
+      - type: markdown
+        content: |
+          {% set morning = states('binary_sensor.marc_med_morning') == 'on' %}
+          {% set morning_puffer = states('binary_sensor.marc_med_morning_puffer') == 'on' %}
+          {% set lunch = states('binary_sensor.marc_med_lunch') == 'on' %}
+          {% set evening = states('binary_sensor.marc_med_evening') == 'on' %}
+          {% set evening_puffer = states('binary_sensor.marc_med_evening_puffer') == 'on' %}
+          {% set total = morning|int + morning_puffer|int + lunch|int + evening|int + evening_puffer|int %}
+          
+          ### Today's Progress: {{ total }}/5 Complete
+          
+          {{ '✅' if morning else '❌' }} Morning Pills {{ '- Taken at ' + state_attr('binary_sensor.marc_med_morning', 'taken_at') if morning else '' }}
+          {{ '✅' if morning_puffer else '❌' }} Morning Puffer {{ '- Used at ' + state_attr('binary_sensor.marc_med_morning_puffer', 'taken_at') if morning_puffer else '' }}
+          {{ '✅' if lunch else '❌' }} Lunch Pills {{ '- Taken at ' + state_attr('binary_sensor.marc_med_lunch', 'taken_at') if lunch else '' }}
+          {{ '✅' if evening else '❌' }} Evening Pills {{ '- Taken at ' + state_attr('binary_sensor.marc_med_evening', 'taken_at') if evening else '' }}
+          {{ '✅' if evening_puffer else '❌' }} Evening Puffer {{ '- Used at ' + state_attr('binary_sensor.marc_med_evening_puffer', 'taken_at') if evening_puffer else '' }}
+          
+          {% if total == 5 %}
+          🎉 **All medications taken today!**
+          {% elif total == 0 %}
+          ⏰ **Remember to take your medications**
+          {% else %}
+          📋 **{{ 5 - total }} remaining**
+          {% endif %}
+
+  # ============================================
+  # ALTERNATIVE: SIMPLE ENTITY BUTTONS (No custom card needed)
+  # ============================================
+  
+  - type: vertical-stack
+    title: Simple Dose Tracker (Built-in)
+    cards:
+      - type: entities
+        entities:
+          - entity: binary_sensor.marc_med_morning
+            name: "☀️ Morning Pills"
+            tap_action:
+              action: toggle
+          - entity: binary_sensor.marc_med_morning_puffer
+            name: "💨 Morning Puffer"
+            tap_action:
+              action: toggle
+          - entity: binary_sensor.marc_med_lunch
+            name: "🌞 Lunch Pills"
+            tap_action:
+              action: toggle
+          - entity: binary_sensor.marc_med_evening
+            name: "🌙 Evening Pills"
+            tap_action:
+              action: toggle
+          - entity: binary_sensor.marc_med_evening_puffer
+            name: "💨 Evening Puffer"
+            tap_action:
+              action: toggle
+      
+      - type: glance
+        title: Quick Overview
+        columns: 5
+        entities:
+          - entity: binary_sensor.marc_med_morning
+            name: Morning
+          - entity: binary_sensor.marc_med_morning_puffer
+            name: Puffer AM
+          - entity: binary_sensor.marc_med_lunch
+            name: Lunch
+          - entity: binary_sensor.marc_med_evening
+            name: Evening
+          - entity: binary_sensor.marc_med_evening_puffer
+            name: Puffer PM
+
+  # ============================================
+  # MEDICATION INVENTORY (from original)
+  # ============================================
+  
+  - type: vertical-stack
+    title: 📦 Medication Inventory
+    cards:
+      - type: entities
+        entities:
+          - entity: sensor.marc_med_aspirin
+            secondary_info: last-changed
+          - entity: sensor.marc_med_vitamin_d
+            secondary_info: last-changed
+          - entity: sensor.marc_med_blood_pressure_medication
+            secondary_info: last-changed

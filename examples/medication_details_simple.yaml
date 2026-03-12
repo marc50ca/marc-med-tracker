@@ -1,0 +1,443 @@
+# Simple Detailed Medication Panel (No Custom Cards Required)
+# Shows comprehensive medication information using only built-in Home Assistant cards
+
+title: Medication Details
+path: med-details
+icon: mdi:medical-bag
+badges: []
+cards:
+  # ============================================
+  # PAGE HEADER
+  # ============================================
+  
+  - type: markdown
+    content: |
+      # 💊 Medication Information Center
+      ### Complete medication details and tracking
+      {{ now().strftime('%A, %B %d, %Y at %I:%M %p') }}
+
+  # ============================================
+  # TODAY'S DOSE STATUS
+  # ============================================
+  
+  - type: entities
+    title: "📅 Today's Medication Checklist"
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - entity: binary_sensor.marc_med_morning
+        name: Morning Pills
+        secondary_info: last-changed
+      - entity: binary_sensor.marc_med_morning_puffer
+        name: Morning Puffer
+        secondary_info: last-changed
+      - entity: binary_sensor.marc_med_lunch
+        name: Lunch Pills
+        secondary_info: last-changed
+      - entity: binary_sensor.marc_med_evening
+        name: Evening Pills
+        secondary_info: last-changed
+      - entity: binary_sensor.marc_med_evening_puffer
+        name: Evening Puffer
+        secondary_info: last-changed
+
+  # ============================================
+  # MEDICATION #1 - DETAILED VIEW
+  # ============================================
+  
+  - type: entities
+    title: 💊 Aspirin 100mg - Complete Details
+    show_header_toggle: false
+    state_color: true
+    entities:
+      # Current Status Section
+      - type: section
+        label: "📊 Current Status"
+      - entity: sensor.marc_med_aspirin
+        name: Pills Remaining
+        icon: mdi:pill-multiple
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: status
+        name: Status
+        icon: mdi:alert-circle
+      
+      # Medication Information Section
+      - type: section
+        label: "ℹ️ Medication Information"
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: medication_name
+        name: Medication Name
+        icon: mdi:pill
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: strength
+        name: Strength
+        icon: mdi:weight
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: prescribing_doctor
+        name: Prescribing Doctor
+        icon: mdi:doctor
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: notes
+        name: Notes
+        icon: mdi:note-text
+      
+      # Dosage Schedule Section
+      - type: section
+        label: "⏰ Dosage Schedule"
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: doses_per_day
+        name: Doses per Day
+        icon: mdi:clock-outline
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: pills_per_dose
+        name: Pills per Dose
+        icon: mdi:pill
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: daily_consumption
+        name: Daily Consumption (pills)
+        icon: mdi:calendar-today
+      
+      # Inventory Section
+      - type: section
+        label: "📦 Inventory"
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: initial_stock
+        name: Initial Stock
+        icon: mdi:package-variant
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: current_stock
+        name: Current Stock
+        icon: mdi:package
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: days_remaining
+        name: Days Remaining
+        suffix: " days"
+        icon: mdi:calendar-clock
+      
+      # Refill Information Section
+      - type: section
+        label: "🔄 Refill Information"
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: refills_left
+        name: Refills Remaining
+        icon: mdi:sync
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: last_refilled
+        name: Last Refilled Date
+        icon: mdi:calendar-check
+      - type: attribute
+        entity: sensor.marc_med_aspirin
+        attribute: days_since_refill
+        name: Days Since Last Refill
+        suffix: " days"
+        icon: mdi:calendar-range
+      
+      # Actions Section
+      - type: section
+        label: "⚡ Quick Actions"
+      - type: button
+        name: Record Dose Taken
+        icon: mdi:check-circle-outline
+        action_row:
+          type: button
+          tap_action:
+            action: call-service
+            service: marc_med_tracker.take_dose
+            service_data:
+              medication_id: aspirin
+
+  # ============================================
+  # MEDICATION #2 - VITAMIN D
+  # ============================================
+  
+  - type: entities
+    title: 💊 Vitamin D 2000 IU - Complete Details
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - type: section
+        label: "📊 Current Status"
+      - entity: sensor.marc_med_vitamin_d
+        name: Pills Remaining
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: status
+        name: Status
+      
+      - type: section
+        label: "ℹ️ Information"
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: strength
+        name: Strength
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: prescribing_doctor
+        name: Doctor
+      
+      - type: section
+        label: "⏰ Schedule"
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: doses_per_day
+        name: Doses per Day
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: daily_consumption
+        name: Daily Consumption
+      
+      - type: section
+        label: "📦 Stock"
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: days_remaining
+        name: Days Left
+        suffix: " days"
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: refills_left
+        name: Refills
+      - type: attribute
+        entity: sensor.marc_med_vitamin_d
+        attribute: last_refilled
+        name: Last Refilled
+
+  # ============================================
+  # MEDICATION #3 - BLOOD PRESSURE
+  # ============================================
+  
+  - type: entities
+    title: 💊 Blood Pressure Medication 10mg - Details
+    show_header_toggle: false
+    state_color: true
+    entities:
+      - type: section
+        label: "📊 Current Status"
+      - entity: sensor.marc_med_blood_pressure_medication
+        name: Pills Remaining
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: status
+        name: Status
+      
+      - type: section
+        label: "ℹ️ Information"
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: strength
+        name: Strength
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: prescribing_doctor
+        name: Doctor
+      
+      - type: section
+        label: "⏰ Schedule"
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: doses_per_day
+        name: Doses per Day
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: daily_consumption
+        name: Daily Consumption
+      
+      - type: section
+        label: "📦 Stock"
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: days_remaining
+        name: Days Left
+        suffix: " days"
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: refills_left
+        name: Refills
+      - type: attribute
+        entity: sensor.marc_med_blood_pressure_medication
+        attribute: last_refilled
+        name: Last Refilled
+
+  # ============================================
+  # SUMMARY TABLE
+  # ============================================
+  
+  - type: markdown
+    title: 📋 Quick Reference Table
+    content: |
+      | Medication | Strength | Stock | Days Left | Refills | Doctor |
+      |------------|----------|-------|-----------|---------|--------|
+      {% for entity in states.sensor if 'medication_' in entity.entity_id %}
+      | {{ state_attr(entity.entity_id, 'medication_name') }} | {{ state_attr(entity.entity_id, 'strength') }} | {{ states(entity.entity_id) }} | {{ state_attr(entity.entity_id, 'days_remaining') }} | {{ state_attr(entity.entity_id, 'refills_left') }} | {{ state_attr(entity.entity_id, 'prescribing_doctor') }} |
+      {% endfor %}
+
+  # ============================================
+  # ALERTS PANEL
+  # ============================================
+  
+  - type: markdown
+    title: ⚠️ Active Alerts
+    content: |
+      {% set ns = namespace(alerts=[]) %}
+      
+      {% for entity in states.sensor if 'medication_' in entity.entity_id %}
+        {% set status = state_attr(entity.entity_id, 'status') %}
+        {% set name = state_attr(entity.entity_id, 'medication_name') %}
+        {% set days = state_attr(entity.entity_id, 'days_remaining') %}
+        {% set refills = state_attr(entity.entity_id, 'refills_left') %}
+        {% set stock = states(entity.entity_id) | int %}
+        
+        {% if status == 'OUT_OF_STOCK' %}
+          {% set ns.alerts = ns.alerts + ['🔴 **' + name + '** - OUT OF STOCK! Contact doctor immediately.'] %}
+        {% elif status == 'CRITICAL' %}
+          {% set ns.alerts = ns.alerts + ['🟠 **' + name + '** - CRITICAL: Only ' + days|string + ' days remaining (' + stock|string + ' pills)'] %}
+        {% elif status == 'LOW' %}
+          {% set ns.alerts = ns.alerts + ['🟡 **' + name + '** - LOW: ' + days|string + ' days remaining. Request refill soon.'] %}
+        {% elif status == 'NO_REFILLS_LEFT' %}
+          {% set ns.alerts = ns.alerts + ['🟣 **' + name + '** - No refills remaining! Contact ' + state_attr(entity.entity_id, 'prescribing_doctor') + ' for new prescription.'] %}
+        {% endif %}
+      {% endfor %}
+      
+      {% if ns.alerts|length > 0 %}
+        {{ ns.alerts|join('\n\n') }}
+      {% else %}
+      ✅ **All medications in good standing**
+      
+      No immediate action required.
+      {% endif %}
+
+  # ============================================
+  # REFILL SCHEDULE
+  # ============================================
+  
+  - type: markdown
+    title: 📅 Refill Schedule (Next 90 Days)
+    content: |
+      {% for entity in states.sensor if 'medication_' in entity.entity_id %}
+      {% set days = state_attr(entity.entity_id, 'days_remaining') | int %}
+      {% if days > 0 and days <= 90 %}
+      {% set refill_date = (now().timestamp() + (days * 86400)) | timestamp_custom('%B %d, %Y') %}
+      {% set dow = (now().timestamp() + (days * 86400)) | timestamp_custom('%A') %}
+      
+      ### {{ state_attr(entity.entity_id, 'medication_name') }} {{ state_attr(entity.entity_id, 'strength') }}
+      - **Refill Needed By**: {{ dow }}, {{ refill_date }}
+      - **Days Until Refill**: {{ days }} days
+      - **Refills Available**: {{ state_attr(entity.entity_id, 'refills_left') }}
+      - **Current Stock**: {{ states(entity.entity_id) }} pills
+      - **Doctor**: {{ state_attr(entity.entity_id, 'prescribing_doctor') }}
+      
+      {% endif %}
+      {% endfor %}
+
+  # ============================================
+  # DOCTOR DIRECTORY
+  # ============================================
+  
+  - type: markdown
+    title: 👨‍⚕️ Physician Directory
+    content: |
+      {% set doctors = namespace(list=[]) %}
+      {% for entity in states.sensor if 'medication_' in entity.entity_id %}
+        {% set doctor = state_attr(entity.entity_id, 'prescribing_doctor') %}
+        {% if doctor not in doctors.list %}
+          {% set doctors.list = doctors.list + [doctor] %}
+      
+      ### {{ doctor }}
+      
+      **Prescribed Medications:**
+      {% for med in states.sensor if 'medication_' in med.entity_id and state_attr(med.entity_id, 'prescribing_doctor') == doctor %}
+      - {{ state_attr(med.entity_id, 'medication_name') }} {{ state_attr(med.entity_id, 'strength') }} - {{ state_attr(med.entity_id, 'doses_per_day') }}x daily
+        - Stock: {{ states(med.entity_id) }} pills ({{ state_attr(med.entity_id, 'days_remaining') }} days)
+        - Refills: {{ state_attr(med.entity_id, 'refills_left') }}
+      {% endfor %}
+      
+        {% endif %}
+      {% endfor %}
+
+  # ============================================
+  # INVENTORY HISTORY
+  # ============================================
+  
+  - type: history-graph
+    title: 📈 Medication Inventory History (7 Days)
+    hours_to_show: 168
+    refresh_interval: 3600
+    entities:
+      - entity: sensor.marc_med_aspirin
+        name: Aspirin
+      - entity: sensor.marc_med_vitamin_d
+        name: Vitamin D
+      - entity: sensor.marc_med_blood_pressure_medication
+        name: BP Med
+
+  # ============================================
+  # ADHERENCE TRACKING
+  # ============================================
+  
+  - type: markdown
+    title: 📊 Today's Adherence
+    content: |
+      {% set morning = states('binary_sensor.marc_med_morning') == 'on' %}
+      {% set morning_puffer = states('binary_sensor.marc_med_morning_puffer') == 'on' %}
+      {% set lunch = states('binary_sensor.marc_med_lunch') == 'on' %}
+      {% set evening = states('binary_sensor.marc_med_evening') == 'on' %}
+      {% set evening_puffer = states('binary_sensor.marc_med_evening_puffer') == 'on' %}
+      {% set total = morning|int + morning_puffer|int + lunch|int + evening|int + evening_puffer|int %}
+      {% set percent = (total / 5 * 100) | round(0) %}
+      
+      ## Adherence: {{ percent }}%
+      ### {{ total }} of 5 doses taken
+      
+      | Time | Medication | Status | Time Taken |
+      |------|-----------|--------|------------|
+      | 🌅 Morning | Pills | {{ '✅ Taken' if morning else '⏰ Pending' }} | {{ state_attr('binary_sensor.marc_med_morning', 'taken_at') if morning else '-' }} |
+      | 🌅 Morning | Puffer | {{ '✅ Taken' if morning_puffer else '⏰ Pending' }} | {{ state_attr('binary_sensor.marc_med_morning_puffer', 'taken_at') if morning_puffer else '-' }} |
+      | ☀️ Lunch | Pills | {{ '✅ Taken' if lunch else '⏰ Pending' }} | {{ state_attr('binary_sensor.marc_med_lunch', 'taken_at') if lunch else '-' }} |
+      | 🌙 Evening | Pills | {{ '✅ Taken' if evening else '⏰ Pending' }} | {{ state_attr('binary_sensor.marc_med_evening', 'taken_at') if evening else '-' }} |
+      | 🌙 Evening | Puffer | {{ '✅ Taken' if evening_puffer else '⏰ Pending' }} | {{ state_attr('binary_sensor.marc_med_evening_puffer', 'taken_at') if evening_puffer else '-' }} |
+      
+      {% if percent == 100 %}
+      ---
+      ## 🎉 Perfect Adherence Today!
+      {% elif percent >= 60 %}
+      ---
+      ## 👍 Good Progress
+      {% elif percent > 0 %}
+      ---
+      ## ⏰ Don't Forget Remaining Doses
+      {% else %}
+      ---
+      ## ⚠️ No Doses Taken Yet
+      {% endif %}
+
+  # ============================================
+  # WEEKLY ADHERENCE HISTORY
+  # ============================================
+  
+  - type: history-graph
+    title: 📊 7-Day Adherence History
+    hours_to_show: 168
+    entities:
+      - entity: binary_sensor.marc_med_morning
+        name: Morning
+      - entity: binary_sensor.marc_med_lunch
+        name: Lunch
+      - entity: binary_sensor.marc_med_evening
+        name: Evening
+      - entity: binary_sensor.marc_med_morning_puffer
+        name: AM Puffer
+      - entity: binary_sensor.marc_med_evening_puffer
+        name: PM Puffer
