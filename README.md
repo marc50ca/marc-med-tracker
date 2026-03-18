@@ -702,4 +702,3 @@ This project is licensed under the MIT License.
 ## Disclaimer
 
 This integration is for informational and tracking purposes only. It should not be used as a substitute for professional medical advice. Always consult with healthcare professionals regarding your medications.
-# marc-med-tracker
