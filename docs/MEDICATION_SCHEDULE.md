@@ -1,21 +1,20 @@
-# Medication Schedule Quick Reference
+# Your Daily Medication Schedule
 
 ## Morning Medications ☀️
 
 **Time:** With breakfast
 
-| Medication | Dosage | Notes |
-|------------|--------|-------|
-| Jardiance | 10mg x 1 | Take with breakfast |
-| Metformin | 500mg x 1 | Take with food |
-| Pantoloc | 40mg x 1 | **30 minutes BEFORE breakfast** |
-| Candesartan | 16mg x 1 | Blood pressure |
-| Bisoprolol | 5mg x 1 | Take with food |
-| Spironolactone | 25mg x 1 | Monitor potassium |
-| Edoxaban | 60mg x 1 | **SAME TIME DAILY - CRITICAL** |
-| Zenhale Inhaler | 2 puffs | Rinse mouth after |
+| Medication | Dosage | Prescriber | Notes |
+|------------|--------|------------|-------|
+| **Metformin** | 500mg x **2 tablets** | NP T. Wakefield | Take with food |
+| **Candesartan** | 16mg x 1 tablet | NP T. Wakefield | Blood pressure |
+| **Rosuvastatin** | 10mg x 1 tablet | NP T. Wakefield | Cholesterol |
+| **Pantoprazole** | 40mg x 1 tablet | NP T. Wakefield | Digestive health |
+| **Bisoprolol** | 2.5mg x 1 tablet | Dr. K. Ducet | Heart health |
+| **Spironolactone** | 60mg x **0.5 tablet (HALF)** | Dr. K. Ducet | **Cut tablet in half** |
+| **Zenhale Inhaler** | **1-2 puffs** | Dr. K. Ducet | **Rinse mouth after!** |
 
-**Total:** 7 pills + 2 puffs
+**Morning Total:** 6 tablets + 1-2 puffs
 
 ---
 
@@ -23,83 +22,124 @@
 
 **Time:** With lunch
 
-| Medication | Dosage | Notes |
-|------------|--------|-------|
-| Metformin | 500mg x 1 | Take with food |
+| Medication | Dosage | Prescriber | Notes |
+|------------|--------|------------|-------|
+| **Metformin** | 500mg x **2 tablets** | NP T. Wakefield | Take with food |
 
-**Total:** 1 pill
+**Lunch Total:** 2 tablets
 
 ---
 
 ## Evening Medications 🌙
 
-**Time:** At bedtime
+**Time:** In the evening
 
-| Medication | Dosage | Notes |
-|------------|--------|-------|
-| Rosuvastatin | 20mg x 1 | Take at bedtime |
-| Zenhale Inhaler | 2 puffs | Rinse mouth after |
+| Medication | Dosage | Prescriber | Notes |
+|------------|--------|------------|-------|
+| **Jardiance** | 40mg x 1 tablet | NP T. Wakefield | Diabetes medication |
+| **Zenhale Inhaler** | **1-2 puffs** | Dr. K. Ducet | **Rinse mouth after!** |
 
-**Total:** 1 pill + 2 puffs
+**Evening Total:** 1 tablet + 1-2 puffs
 
 ---
 
 ## Daily Summary
 
-- **Morning:** 7 pills + 2 puffs
-- **Lunch:** 1 pill
-- **Evening:** 1 pill + 2 puffs
-- **Total per day:** 9 pills + 4 puffs
+- **Morning:** 6 tablets + 1-2 puffs
+- **Lunch:** 2 tablets
+- **Evening:** 1 tablet + 1-2 puffs
+- **Daily Total:** **9 tablets** + **2-4 puffs**
 
 ---
 
-## Critical Reminders
+## Special Instructions ⚠️
 
-🚨 **Edoxaban (Blood Thinner)**
-- Must take at SAME TIME every day
-- DO NOT skip or double dose
-- If you miss: take as soon as remembered (same day only)
-- Call doctor if you miss more than one dose
+### Spironolactone (60mg)
+- ✂️ **Cut the 60mg tablet in HALF**
+- Take only **0.5 tablet** (30mg) once daily
+- This is the correct dose as prescribed
 
-💊 **Pantoloc**
-- Take 30 minutes BEFORE breakfast
-- Do not take with other medications
+### Metformin (500mg)
+- 💊 Take **2 tablets** each time
+- Taken **twice daily** (morning and lunch)
+- Total: **4 tablets per day** (2000mg total)
+- Always take with food
 
-💨 **Zenhale Inhaler**
-- Always rinse mouth after use
-- Prevents oral thrush
-
----
-
-## Refill Tracking
-
-Use the dashboard to track:
-- Days remaining for each medication
-- When to request refills (at 14 days)
-- Number of refills left
-- Which doctor to contact
+### Zenhale Inhaler
+- 💨 Use **1-2 puffs** twice daily
+- **ALWAYS rinse mouth with water after each use**
+- This prevents oral thrush (yeast infection)
+- Don't swallow the rinse water - spit it out
 
 ---
 
-## Doctor Quick Reference
+## Prescribers & Refill Info
 
-### Dr. Smith (Endocrinology/Cardiology)
-- Jardiance (diabetes)
-- Metformin (diabetes)
-- Rosuvastatin (cholesterol)
+### NP T. Wakefield
+**Last Refilled:** March 25, 2026  
+**Refills Remaining:** 3 for each medication
 
-### Dr. Johnson (Gastroenterology)
-- Pantoloc (digestive)
+Medications:
+- Metformin 500mg
+- Jardiance 40mg
+- Candesartan 16mg
+- Rosuvastatin 10mg
+- Pantoprazole 40mg
 
-### Dr. Wilson (Cardiology)
-- Candesartan (BP)
-- Bisoprolol (BP)
-- Spironolactone (heart)
-- Edoxaban (blood thinner)
+### Dr. K. Ducet
+**Last Refilled:** February 1, 2026  
+**Refills Remaining:** 2 for each medication
 
-### Dr. Brown (Respiratory)
-- Zenhale Inhaler (asthma/COPD)
+Medications:
+- Bisoprolol 2.5mg
+- Spironolactone 60mg (take half)
+- Zenhale Inhaler 100/6mcg
+
+---
+
+## Medication Purposes
+
+### Diabetes Management
+- **Metformin** - Controls blood sugar
+- **Jardiance** - Lowers blood sugar, protects heart
+
+### Heart & Blood Pressure
+- **Candesartan** - Lowers blood pressure
+- **Bisoprolol** - Slows heart rate, lowers BP
+- **Spironolactone** - Diuretic, helps heart function
+
+### Cholesterol
+- **Rosuvastatin** - Lowers bad cholesterol (LDL)
+
+### Digestive
+- **Pantoprazole** - Reduces stomach acid (PPI)
+
+### Respiratory
+- **Zenhale** - Controls asthma/COPD symptoms
+
+---
+
+## Tips for Success
+
+### Daily Routine
+1. ✅ Use dashboard buttons to track each dose time
+2. ✅ Keep all medications in one place
+3. ✅ Use a pill organizer for the week
+4. ✅ Set alarms for dose times if needed
+
+### Refill Management
+- 📅 Request refills when dashboard shows **≤14 days**
+- 🟡 Yellow status = Order soon
+- 🟠 Orange status = Order NOW
+- 🔴 Red status = URGENT - Out of stock
+
+### When Traveling
+- Pack 2-3 extra days of medication
+- Keep medications in carry-on luggage
+- Bring prescription list
 
 ---
 
 **Print this page and keep it visible for easy reference!**
+
+**Questions?** Check your Home Assistant dashboard for real-time stock levels and alerts.

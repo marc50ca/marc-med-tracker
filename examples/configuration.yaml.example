@@ -1,140 +1,120 @@
 # Marc Med Tracker Configuration
-# Copy this to your configuration.yaml and adjust dates/values as needed
+# Updated with exact medication details - March 2026
 
 marc_med_tracker:
   medications:
     # ========================================
-    # DIABETES MANAGEMENT
+    # NURSE PRACTITIONER T. WAKEFIELD
+    # Last Refilled: March 25, 2026
     # ========================================
-    
-    - name: "Jardiance"
-      prescribing_doctor: "Dr. Smith"
-      refills_left: 3
-      last_refilled: "2025-02-20"
-      strength: "10mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-      notes: "Take in the morning with breakfast"
     
     - name: "Metformin"
-      prescribing_doctor: "Dr. Smith"
-      refills_left: 5
-      last_refilled: "2025-02-15"
+      prescribing_doctor: "NP T. Wakefield"
+      refills_left: 3
+      last_refilled: "2026-03-25"
       strength: "500mg"
-      doses_per_day: 2          # Morning and evening
-      pills_per_dose: 1
-      initial_stock: 180          # 90-day supply x 2 per day
-      notes: "Take with meals - morning and evening"
+      doses_per_day: 2          # Morning and lunch
+      pills_per_dose: 2          # 2 tablets each time
+      initial_stock: 360         # 90 days x 2 doses x 2 tablets = 360 tablets
+      notes: "2 tablets twice daily - morning and lunch with food"
     
-    # ========================================
-    # DIGESTIVE HEALTH
-    # ========================================
-    
-    - name: "Pantoloc"
-      prescribing_doctor: "Dr. Johnson"
-      refills_left: 4
-      last_refilled: "2025-02-18"
+    - name: "Jardiance"
+      prescribing_doctor: "NP T. Wakefield"
+      refills_left: 3
+      last_refilled: "2026-03-25"
       strength: "40mg"
-      doses_per_day: 1
+      doses_per_day: 1          # Evening only
       pills_per_dose: 1
       initial_stock: 90
-      notes: "Take 30 minutes before breakfast"
-    
-    # ========================================
-    # CHOLESTEROL MANAGEMENT
-    # ========================================
-    
-    - name: "Rosuvastatin"
-      prescribing_doctor: "Dr. Smith"
-      refills_left: 6
-      last_refilled: "2025-02-10"
-      strength: "20mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-      notes: "Take at bedtime"
-    
-    # ========================================
-    # BLOOD PRESSURE & HEART HEALTH
-    # ========================================
+      notes: "1 tablet once daily in the evening"
     
     - name: "Candesartan"
-      prescribing_doctor: "Dr. Wilson"
-      refills_left: 5
-      last_refilled: "2025-02-12"
+      prescribing_doctor: "NP T. Wakefield"
+      refills_left: 3
+      last_refilled: "2026-03-25"
       strength: "16mg"
-      doses_per_day: 1
+      doses_per_day: 1          # Morning only
       pills_per_dose: 1
       initial_stock: 90
-      notes: "Take in the morning"
+      notes: "1 tablet once daily in the morning"
+    
+    - name: "Rosuvastatin"
+      prescribing_doctor: "NP T. Wakefield"
+      refills_left: 3
+      last_refilled: "2026-03-25"
+      strength: "10mg"
+      doses_per_day: 1          # Morning only
+      pills_per_dose: 1
+      initial_stock: 90
+      notes: "1 tablet once daily in the morning"
+    
+    - name: "Pantoprazole"
+      prescribing_doctor: "NP T. Wakefield"
+      refills_left: 3
+      last_refilled: "2026-03-25"
+      strength: "40mg"
+      doses_per_day: 1          # Morning only
+      pills_per_dose: 1
+      initial_stock: 90
+      notes: "1 tablet once daily in the morning"
+    
+    # ========================================
+    # DR. K. DUCET
+    # Last Refilled: February 1, 2026
+    # ========================================
     
     - name: "Bisoprolol"
-      prescribing_doctor: "Dr. Wilson"
-      refills_left: 4
-      last_refilled: "2025-02-14"
-      strength: "5mg"
-      doses_per_day: 1
+      prescribing_doctor: "Dr. K. Ducet"
+      refills_left: 2
+      last_refilled: "2026-02-01"
+      strength: "2.5mg"
+      doses_per_day: 1          # Morning only
       pills_per_dose: 1
       initial_stock: 90
-      notes: "Take in the morning with food"
+      notes: "1 tablet once daily in the morning"
     
     - name: "Spironolactone"
-      prescribing_doctor: "Dr. Wilson"
-      refills_left: 3
-      last_refilled: "2025-02-16"
-      strength: "25mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-      notes: "Monitor potassium levels regularly"
-    
-    # ========================================
-    # BLOOD THINNER (Critical - Don't Miss!)
-    # ========================================
-    
-    - name: "Edoxaban"
-      prescribing_doctor: "Dr. Wilson"
+      prescribing_doctor: "Dr. K. Ducet"
       refills_left: 2
-      last_refilled: "2025-02-22"
+      last_refilled: "2026-02-01"
       strength: "60mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-      notes: "CRITICAL: Take at same time daily - do not miss doses!"
-    
-    # ========================================
-    # RESPIRATORY (Inhaler)
-    # ========================================
+      doses_per_day: 1          # Morning only
+      pills_per_dose: 0.5        # Half tablet
+      initial_stock: 45          # 90 days x 0.5 tablet = 45 tablets
+      notes: "0.5 tablet (half) once daily in the morning"
     
     - name: "Zenhale Inhaler"
-      prescribing_doctor: "Dr. Brown"
+      prescribing_doctor: "Dr. K. Ducet"
       refills_left: 2
-      last_refilled: "2025-01-15"
+      last_refilled: "2026-02-01"
       strength: "100/6 mcg"
-      doses_per_day: 2            # Morning and evening
-      pills_per_dose: 2            # 2 puffs per dose
-      initial_stock: 120           # 60 doses x 2 puffs = 120 puffs total
-      notes: "2 puffs twice daily - rinse mouth after use"
+      doses_per_day: 2          # Morning and evening
+      pills_per_dose: 2          # 1-2 puffs (using max of 2)
+      initial_stock: 120         # 60 doses x 2 puffs = 120 puffs total
+      notes: "1-2 puffs twice daily - morning and evening, rinse mouth after use"
 
 # ========================================
-# IMPORTANT NOTES
+# SETUP COMPLETE
 # ========================================
-# 
-# After adding this configuration:
-# 1. Update the 'last_refilled' dates to match when you actually got each medication
-# 2. Adjust 'refills_left' to your current refill count
-# 3. Change doctor names to your actual doctors
-# 4. Restart Home Assistant
-# 5. Check Developer Tools → States to verify sensors were created
 #
-# You should see 9 sensors created:
-# - sensor.marc_med_jardiance
+# After adding this configuration:
+# 1. Save this file
+# 2. Restart Home Assistant
+# 3. Check Developer Tools → States
+# 
+# You should see 8 sensors created:
 # - sensor.marc_med_metformin
-# - sensor.marc_med_pantoloc
-# - sensor.marc_med_rosuvastatin
+# - sensor.marc_med_jardiance
 # - sensor.marc_med_candesartan
+# - sensor.marc_med_rosuvastatin
+# - sensor.marc_med_pantoprazole
 # - sensor.marc_med_bisoprolol
 # - sensor.marc_med_spironolactone
-# - sensor.marc_med_edoxaban
 # - sensor.marc_med_zenhale_inhaler
+#
+# Plus 5 binary sensors for daily tracking:
+# - binary_sensor.marc_med_morning
+# - binary_sensor.marc_med_lunch
+# - binary_sensor.marc_med_evening
+# - binary_sensor.marc_med_morning_puffer
+# - binary_sensor.marc_med_evening_puffer

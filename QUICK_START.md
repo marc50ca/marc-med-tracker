@@ -1,139 +1,87 @@
-# Quick Start Guide - 15 Minutes to Full Setup
+# Quick Start Guide - Your Medication Tracker
 
-Get your medication tracker running in 15 minutes!
+## Your Medications
 
-## Part 1: Install (5 minutes)
+You're tracking **8 medications**:
+
+**NP T. Wakefield (Refilled March 25, 2026):**
+- Metformin 500mg (2 tablets, twice daily)
+- Jardiance 40mg (1 tablet, evening)
+- Candesartan 16mg (1 tablet, morning)
+- Rosuvastatin 10mg (1 tablet, morning)
+- Pantoprazole 40mg (1 tablet, morning)
+
+**Dr. K. Ducet (Refilled February 1, 2026):**
+- Bisoprolol 2.5mg (1 tablet, morning)
+- Spironolactone 60mg (0.5 tablet/HALF, morning)
+- Zenhale Inhaler (1-2 puffs, twice daily)
+
+**Daily Total:** 9 tablets + 2-4 puffs
+
+---
+
+## Installation (10 minutes)
 
 ### Step 1: Install via HACS
 
-1. Open **HACS** in Home Assistant
-2. Click **Integrations**
-3. Click **⋮** → **Custom repositories**
-4. Add: `marc50ca/marc-med-tracker`
-5. Category: **Integration**
-6. Click **Add**
-7. Search for "Marc Med Tracker"
-8. Click **Download**
-9. **Restart Home Assistant**
+1. Open **HACS** → **Integrations**
+2. Click **⋮** → **Custom repositories**
+3. Repository: `marc50ca/marc-med-tracker`
+4. Category: **Integration**
+5. Click **Add**
+6. Search "Marc Med Tracker" → **Download**
+7. **Restart Home Assistant**
 
 ### Step 2: Add Configuration
 
 1. Open `/config/configuration.yaml`
-2. Add this at the end:
+2. Copy the ENTIRE contents from `examples/configuration.yaml.example`
+3. Paste at the end of your configuration.yaml
+4. **Save the file**
+5. **Restart Home Assistant** again
 
-```yaml
-marc_med_tracker:
-  medications:
-    - name: "Jardiance"
-      prescribing_doctor: "Dr. Smith"
-      refills_left: 3
-      last_refilled: "2025-03-01"  # ← CHANGE THIS to your actual date
-      strength: "10mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-    
-    - name: "Metformin"
-      prescribing_doctor: "Dr. Smith"
-      refills_left: 5
-      last_refilled: "2025-03-01"  # ← CHANGE THIS
-      strength: "500mg"
-      doses_per_day: 2
-      pills_per_dose: 1
-      initial_stock: 180
-    
-    - name: "Pantoloc"
-      prescribing_doctor: "Dr. Johnson"
-      refills_left: 4
-      last_refilled: "2025-03-01"  # ← CHANGE THIS
-      strength: "40mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-    
-    - name: "Rosuvastatin"
-      prescribing_doctor: "Dr. Smith"
-      refills_left: 6
-      last_refilled: "2025-03-01"  # ← CHANGE THIS
-      strength: "20mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-    
-    - name: "Candesartan"
-      prescribing_doctor: "Dr. Wilson"
-      refills_left: 5
-      last_refilled: "2025-03-01"  # ← CHANGE THIS
-      strength: "16mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-    
-    - name: "Bisoprolol"
-      prescribing_doctor: "Dr. Wilson"
-      refills_left: 4
-      last_refilled: "2025-03-01"  # ← CHANGE THIS
-      strength: "5mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-    
-    - name: "Spironolactone"
-      prescribing_doctor: "Dr. Wilson"
-      refills_left: 3
-      last_refilled: "2025-03-01"  # ← CHANGE THIS
-      strength: "25mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-    
-    - name: "Edoxaban"
-      prescribing_doctor: "Dr. Wilson"
-      refills_left: 2
-      last_refilled: "2025-03-01"  # ← CHANGE THIS
-      strength: "60mg"
-      doses_per_day: 1
-      pills_per_dose: 1
-      initial_stock: 90
-      notes: "CRITICAL: Take at same time daily"
-    
-    - name: "Zenhale Inhaler"
-      prescribing_doctor: "Dr. Brown"
-      refills_left: 2
-      last_refilled: "2025-03-01"  # ← CHANGE THIS
-      strength: "100/6 mcg"
-      doses_per_day: 2
-      pills_per_dose: 2
-      initial_stock: 120
-      notes: "2 puffs twice daily - rinse mouth after"
-```
-
-3. **Update the dates!** Change `last_refilled` to when you actually got each refill
-4. Update doctor names if different
-5. Save file
-6. **Restart Home Assistant again**
-
-### Step 3: Verify
+### Step 3: Verify Installation
 
 1. Go to **Developer Tools** → **States**
-2. Search: `marc_med_`
-3. Should see **14 entities total:**
-   - 9 medication sensors (jardiance, metformin, etc.)
-   - 5 daily dose trackers (morning, lunch, evening, puffers)
+2. Search for: `marc_med_`
+3. You should see **13 entities**:
+   - 8 medication sensors (metformin, jardiance, etc.)
+   - 5 daily tracking buttons (morning, lunch, evening, puffers)
 
-✅ All there? Continue to Part 2!
+✅ All there? Continue to dashboard setup!
 
 ---
 
-## Part 2: Add Dashboard (10 minutes)
+## Dashboard Setup (5 minutes)
 
-### Option A: Simple Dashboard (2 minutes)
+### Option A: Copy Complete Dashboard (Recommended)
 
-1. Go to your dashboard
-2. Click **⋮** → **Edit Dashboard**
-3. Click **➕ Add Card**
-4. Scroll down, click **Manual**
-5. Paste this:
+1. Go to your main dashboard
+2. Click **⋮** (three dots) → **Edit Dashboard**
+3. Click **➕ Add View** (new tab at top)
+4. Configure:
+   - **Title**: Medications
+   - **Icon**: mdi:pill
+   - **URL**: medications
+5. Click **Save**
+6. Click into the new "Medications" tab
+7. Click **⋮** → **Raw Configuration Editor**
+8. **Delete everything** in the editor
+9. Open file: `examples/complete_dashboard.yaml`
+10. **Copy ALL the contents**
+11. **Paste into the editor**
+12. Click **Save**
+
+**Done!** You now have a complete medication dashboard.
+
+### Option B: Quick Simple Card (2 minutes)
+
+If you just want something basic right now:
+
+1. Go to dashboard → **Edit**
+2. Click **➕ Add Card**
+3. Scroll down → **Manual**
+4. Paste this:
 
 ```yaml
 type: entities
@@ -141,117 +89,177 @@ title: "💊 Today's Medications"
 state_color: true
 entities:
   - entity: binary_sensor.marc_med_morning
-    name: "☀️ Morning Pills (7 pills + puffer)"
+    name: "☀️ Morning (6 pills + puffer)"
     tap_action:
       action: toggle
   - entity: binary_sensor.marc_med_lunch
-    name: "🌞 Lunch Pills (1 pill)"
+    name: "🌞 Lunch (2 pills - Metformin)"
     tap_action:
       action: toggle
   - entity: binary_sensor.marc_med_evening
-    name: "🌙 Evening Pills (1 pill + puffer)"
+    name: "🌙 Evening (1 pill + puffer)"
     tap_action:
       action: toggle
-  - type: divider
-  - entity: sensor.marc_med_edoxaban
-    name: "🚨 Edoxaban (Blood Thinner)"
-  - entity: sensor.marc_med_jardiance
-    name: "Jardiance"
-  - entity: sensor.marc_med_metformin
-    name: "Metformin"
-  - entity: sensor.marc_med_candesartan
-    name: "Candesartan"
-  - entity: sensor.marc_med_bisoprolol
-    name: "Bisoprolol"
 ```
 
-6. Click **Save**
-
-**Done!** You have a basic working dashboard.
-
-### Option B: Full Dashboard (10 minutes)
-
-For the complete beautiful dashboard with all features, see:
-📖 **docs/DASHBOARD_SETUP_COMPLETE.md**
-
-It includes:
-- Welcome header
-- Progress percentage
-- All 9 medications
-- Smart alerts
-- Refill schedule
-- Medications by doctor
+5. Click **Save**
 
 ---
 
-## Part 3: Use It! 🎉
+## Using Your Dashboard
 
-### Every Morning
+### Every Day
 
-1. Open dashboard
-2. Tap ☀️ **Morning Pills** → turns green ✅
-3. That's it!
+**Morning:**
+1. Take your 6 pills + puffer
+2. Tap ☀️ **Morning** button → turns GREEN ✅
 
-### Every Lunch
+**Lunch:**
+1. Take 2 Metformin tablets
+2. Tap 🌞 **Lunch** button → turns GREEN ✅
 
-1. Tap 🌞 **Lunch Pills** → turns green ✅
-
-### Every Evening
-
-1. Tap 🌙 **Evening Pills** → turns green ✅
+**Evening:**
+1. Take Jardiance + puffer
+2. Tap 🌙 **Evening** button → turns GREEN ✅
 
 ### Weekly
 
-Check which medications are running low and need refills.
+Check the **⚠️ Medication Alerts** section:
+- 🟢 Green = All good (>7 days left)
+- 🟡 Yellow = Order refill soon (≤7 days)
+- 🟠 Orange = Order NOW (≤3 days)
+- 🔴 Red = OUT OF STOCK - call doctor!
 
 ---
 
-## What Do the Colors Mean?
+## Dashboard Features
 
-**Red Button** 🔴 = Not taken yet today  
-**Green Button** 🟢 = Taken today  
+### Today's Schedule
+Shows your 5 dose times with red/green buttons:
+- Red = Not taken yet
+- Green = Taken today
+- Auto-resets at midnight
 
-**Sensors:**
-- **Green** = More than 7 days left
-- **Yellow** = 7 days or less (get refill soon)
-- **Orange** = 3 days or less (get refill NOW)
-- **Red** = Out of stock (call doctor!)
+### Daily Progress
+Shows % complete with motivating messages:
+- 100% = "Perfect adherence!"
+- 60%+ = "Keep it up!"
+- <60% = Shows how many more to go
+
+### Medication Inventory
+**Two cards organized by prescriber:**
+
+**NP T. Wakefield Card:**
+- Metformin
+- Jardiance
+- Candesartan
+- Rosuvastatin
+- Pantoprazole
+
+**Dr. K. Ducet Card:**
+- Bisoprolol
+- Spironolactone
+- Zenhale Inhaler
+
+Each shows:
+- Pills/puffs remaining
+- Days until refill needed
+- Status (OK/LOW/CRITICAL)
+- Refills left
+- Special instructions
+
+### Active Alerts
+Only shows when action needed:
+- Running low medications
+- Out of stock items
+- No refills left
+
+### Refill Schedule
+Color-coded cards for next 30 days:
+- Yellow background = ≤7 days
+- Blue background = 8-14 days
+- Green background = 15-30 days
+
+Shows:
+- Exact refill date (day & date)
+- Days until refill
+- Current stock
+- Refills available
+- Which doctor to call
+
+### Quick Summary
+4 colorful boxes showing:
+- Total medications (8)
+- Prescribers (2)
+- Pills per day (9)
+- Puffs per day (4)
+
+### Important Reminders
+Highlights:
+- **Spironolactone**: Take HALF tablet
+- **Metformin**: 2 tablets at a time
+- **Zenhale**: Rinse mouth after use
 
 ---
 
 ## Troubleshooting
 
 **"Entity not available"**
-- Check configuration.yaml for typos
+- Check configuration.yaml - copy EXACTLY from example
 - Restart Home Assistant
-- Check Developer Tools → States for sensors
+- Check Developer Tools → States
 
-**Buttons don't toggle**
-- Make sure you're in edit mode
-- Try clicking directly on the entity row
-- Check if binary sensors exist
+**Dashboard shows errors**
+- Make sure you copied the ENTIRE dashboard YAML
+- Check for any cut-off lines
+- Try Option B (simple card) first
 
 **Wrong pill counts**
-- Update `last_refilled` dates in configuration
-- Dates should be when you actually got the refill
-- Restart Home Assistant after changes
+- Dates in configuration should be March 25, 2026 (NP Wakefield)
+- Or February 1, 2026 (Dr. Ducet)
+- These are when you got refills, not today's date
+
+**Buttons don't toggle**
+- Make sure entities exist (check Developer Tools)
+- Try tapping directly on entity name
+- Refresh browser page
 
 ---
 
-## Next Steps
+## Important Notes
+
+### Spironolactone Reminder
+- Your dose is **HALF a 60mg tablet**
+- Cut the tablet in half before taking
+- Take only 0.5 tablet = 30mg
+
+### Metformin Dosing
+- Take **2 tablets** each time
+- Twice daily (morning AND lunch)
+- Total: 4 tablets per day
+
+### Zenhale Inhaler
+- **ALWAYS rinse mouth after each use**
+- This prevents thrush (oral yeast infection)
+- Spit out rinse water - don't swallow
+
+---
+
+## What's Next?
 
 1. ✅ Integration installed
 2. ✅ Dashboard created
-3. 📱 Optional: Set up notifications (see docs/automations)
-4. 🎨 Optional: Install custom theme
+3. 📱 Optional: Set up phone notifications
+4. 📋 Optional: Print medication schedule (docs/MEDICATION_SCHEDULE.md)
 5. 📊 Optional: Add history graphs
 
 ---
 
 ## Need Help?
 
-- 📚 Full documentation in `docs/` folder
-- 🐛 Report issues on GitHub
-- 💬 Ask in Home Assistant community
+- 📖 **Full Documentation**: See `docs/` folder
+- 📅 **Medication Schedule**: `docs/MEDICATION_SCHEDULE.md`
+- 🎨 **Complete Dashboard**: `examples/complete_dashboard.yaml`
+- 🐛 **Issues**: GitHub Issues page
 
-**Enjoy your medication tracker!** 💊🎉
+**Enjoy tracking your medications!** 💊✨

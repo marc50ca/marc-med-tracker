@@ -1,0 +1,478 @@
+# Marc Med Tracker - Medication Reminder Automations
+# Notifications sent to Marc's iPhone 14 at specific times if doses not taken
+
+# ==========================================
+# MORNING MEDICATION REMINDER - 9:30 AM
+# ==========================================
+
+- alias: "Medication Reminder - Morning Pills 9:30 AM"
+  description: "Remind to take morning medications at 9:30 AM if not marked as taken"
+  trigger:
+    - platform: time
+      at: "09:30:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.marc_med_morning
+      state: "off"
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "💊 Morning Medications"
+        message: "Time to take your 6 morning pills!"
+        data:
+          push:
+            sound:
+              name: default
+              critical: 1
+              volume: 0.8
+          actions:
+            - action: "MARK_MORNING_TAKEN"
+              title: "Mark as Taken"
+              destructive: false
+            - action: "SNOOZE_MORNING"
+              title: "Snooze 15 min"
+              destructive: false
+
+- alias: "Medication Reminder - Morning Puffer 9:30 AM"
+  description: "Remind to take morning Zenhale puffer at 9:30 AM"
+  trigger:
+    - platform: time
+      at: "09:30:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.marc_med_morning_puffer
+      state: "off"
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "💨 Morning Puffer"
+        message: "Take Zenhale inhaler (1-2 puffs) - Rinse mouth after!"
+        data:
+          push:
+            sound:
+              name: default
+              critical: 1
+              volume: 0.8
+          actions:
+            - action: "MARK_MORNING_PUFFER_TAKEN"
+              title: "Mark as Taken"
+              destructive: false
+
+# ==========================================
+# LUNCH MEDICATION REMINDER - 2:30 PM
+# ==========================================
+
+- alias: "Medication Reminder - Lunch Pills 2:30 PM"
+  description: "Remind to take lunch Metformin at 2:30 PM if not marked as taken"
+  trigger:
+    - platform: time
+      at: "14:30:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.marc_med_lunch
+      state: "off"
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "💊 Lunch Medications"
+        message: "Take 2 Metformin tablets with food"
+        data:
+          push:
+            sound:
+              name: default
+              critical: 1
+              volume: 0.8
+          actions:
+            - action: "MARK_LUNCH_TAKEN"
+              title: "Mark as Taken"
+              destructive: false
+            - action: "SNOOZE_LUNCH"
+              title: "Snooze 15 min"
+              destructive: false
+
+# ==========================================
+# EVENING MEDICATION REMINDER - 7:30 PM
+# ==========================================
+
+- alias: "Medication Reminder - Evening Pills 7:30 PM"
+  description: "Remind to take evening Jardiance at 7:30 PM if not marked as taken"
+  trigger:
+    - platform: time
+      at: "19:30:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.marc_med_evening
+      state: "off"
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "💊 Evening Medication"
+        message: "Take 1 Jardiance tablet"
+        data:
+          push:
+            sound:
+              name: default
+              critical: 1
+              volume: 0.8
+          actions:
+            - action: "MARK_EVENING_TAKEN"
+              title: "Mark as Taken"
+              destructive: false
+            - action: "SNOOZE_EVENING"
+              title: "Snooze 15 min"
+              destructive: false
+
+- alias: "Medication Reminder - Evening Puffer 7:30 PM"
+  description: "Remind to take evening Zenhale puffer at 7:30 PM"
+  trigger:
+    - platform: time
+      at: "19:30:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.marc_med_evening_puffer
+      state: "off"
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "💨 Evening Puffer"
+        message: "Take Zenhale inhaler (1-2 puffs) - Rinse mouth after!"
+        data:
+          push:
+            sound:
+              name: default
+              critical: 1
+              volume: 0.8
+          actions:
+            - action: "MARK_EVENING_PUFFER_TAKEN"
+              title: "Mark as Taken"
+              destructive: false
+
+# ==========================================
+# SNOOZE AUTOMATIONS (15 MINUTE DELAY)
+# ==========================================
+
+- alias: "Medication Snooze - Morning 15 min"
+  description: "Snooze morning medication reminder for 15 minutes"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "SNOOZE_MORNING"
+  action:
+    - delay: "00:15:00"
+    - condition: state
+      entity_id: binary_sensor.marc_med_morning
+      state: "off"
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "💊 Morning Medications - Reminder"
+        message: "Don't forget your 6 morning pills!"
+        data:
+          push:
+            sound:
+              name: default
+
+- alias: "Medication Snooze - Lunch 15 min"
+  description: "Snooze lunch medication reminder for 15 minutes"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "SNOOZE_LUNCH"
+  action:
+    - delay: "00:15:00"
+    - condition: state
+      entity_id: binary_sensor.marc_med_lunch
+      state: "off"
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "💊 Lunch Medications - Reminder"
+        message: "Don't forget your 2 Metformin tablets!"
+        data:
+          push:
+            sound:
+              name: default
+
+- alias: "Medication Snooze - Evening 15 min"
+  description: "Snooze evening medication reminder for 15 minutes"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "SNOOZE_EVENING"
+  action:
+    - delay: "00:15:00"
+    - condition: state
+      entity_id: binary_sensor.marc_med_evening
+      state: "off"
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "💊 Evening Medication - Reminder"
+        message: "Don't forget your Jardiance tablet!"
+        data:
+          push:
+            sound:
+              name: default
+
+# ==========================================
+# ACTIONABLE NOTIFICATION HANDLERS
+# ==========================================
+
+- alias: "Medication Action - Mark Morning Taken"
+  description: "Mark morning pills as taken from notification"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "MARK_MORNING_TAKEN"
+  action:
+    - service: marc_med_tracker.check_off_dose
+      data:
+        dose_id: "morning"
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "✅ Morning Pills Marked"
+        message: "Great job! Morning medications marked as taken."
+
+- alias: "Medication Action - Mark Morning Puffer Taken"
+  description: "Mark morning puffer as taken from notification"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "MARK_MORNING_PUFFER_TAKEN"
+  action:
+    - service: marc_med_tracker.check_off_dose
+      data:
+        dose_id: "morning_puffer"
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "✅ Morning Puffer Marked"
+        message: "Morning Zenhale marked as taken. Remember to rinse!"
+
+- alias: "Medication Action - Mark Lunch Taken"
+  description: "Mark lunch pills as taken from notification"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "MARK_LUNCH_TAKEN"
+  action:
+    - service: marc_med_tracker.check_off_dose
+      data:
+        dose_id: "lunch"
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "✅ Lunch Metformin Marked"
+        message: "Lunch medications marked as taken."
+
+- alias: "Medication Action - Mark Evening Taken"
+  description: "Mark evening pills as taken from notification"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "MARK_EVENING_TAKEN"
+  action:
+    - service: marc_med_tracker.check_off_dose
+      data:
+        dose_id: "evening"
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "✅ Evening Jardiance Marked"
+        message: "Evening medication marked as taken."
+
+- alias: "Medication Action - Mark Evening Puffer Taken"
+  description: "Mark evening puffer as taken from notification"
+  trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "MARK_EVENING_PUFFER_TAKEN"
+  action:
+    - service: marc_med_tracker.check_off_dose
+      data:
+        dose_id: "evening_puffer"
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "✅ Evening Puffer Marked"
+        message: "Evening Zenhale marked as taken. Remember to rinse!"
+
+# ==========================================
+# LOW STOCK ALERTS
+# ==========================================
+
+- alias: "Medication Alert - Low Stock Warning"
+  description: "Alert when any medication reaches 7 days or less"
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.marc_med_metformin
+        - sensor.marc_med_jardiance
+        - sensor.marc_med_candesartan
+        - sensor.marc_med_rosuvastatin
+        - sensor.marc_med_pantoprazole
+        - sensor.marc_med_bisoprolol
+        - sensor.marc_med_spironolactone
+        - sensor.marc_med_zenhale_inhaler
+      attribute: status
+      to: "LOW"
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "🟡 Medication Running Low"
+        message: >
+          {{ trigger.to_state.attributes.medication_name }} is running low.
+          {{ trigger.to_state.attributes.days_remaining }} days remaining.
+          Request refill from {{ trigger.to_state.attributes.prescribing_doctor }}
+        data:
+          push:
+            sound:
+              name: default
+
+- alias: "Medication Alert - Critical Stock Warning"
+  description: "Alert when any medication reaches 3 days or less"
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.marc_med_metformin
+        - sensor.marc_med_jardiance
+        - sensor.marc_med_candesartan
+        - sensor.marc_med_rosuvastatin
+        - sensor.marc_med_pantoprazole
+        - sensor.marc_med_bisoprolol
+        - sensor.marc_med_spironolactone
+        - sensor.marc_med_zenhale_inhaler
+      attribute: status
+      to: "CRITICAL"
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "🟠 URGENT: Medication Almost Out"
+        message: >
+          {{ trigger.to_state.attributes.medication_name }} - ONLY {{ trigger.to_state.attributes.days_remaining }} DAYS LEFT!
+          Call {{ trigger.to_state.attributes.prescribing_doctor }} NOW to request refill.
+        data:
+          push:
+            sound:
+              name: default
+              critical: 1
+              volume: 1.0
+
+- alias: "Medication Alert - Out of Stock"
+  description: "Alert when any medication runs out"
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.marc_med_metformin
+        - sensor.marc_med_jardiance
+        - sensor.marc_med_candesartan
+        - sensor.marc_med_rosuvastatin
+        - sensor.marc_med_pantoprazole
+        - sensor.marc_med_bisoprolol
+        - sensor.marc_med_spironolactone
+        - sensor.marc_med_zenhale_inhaler
+      attribute: status
+      to: "OUT_OF_STOCK"
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "🔴 CRITICAL: Medication OUT OF STOCK"
+        message: >
+          {{ trigger.to_state.attributes.medication_name }} is OUT OF STOCK!
+          Contact {{ trigger.to_state.attributes.prescribing_doctor }} IMMEDIATELY!
+        data:
+          push:
+            sound:
+              name: default
+              critical: 1
+              volume: 1.0
+    - repeat:
+        count: 3
+        sequence:
+          - delay: "00:01:00"
+          - service: notify.mobile_app_marcs_iphone_14
+            data:
+              title: "🔴 URGENT REMINDER"
+              message: "{{ trigger.to_state.attributes.medication_name }} still out of stock!"
+
+# ==========================================
+# DAILY SUMMARY
+# ==========================================
+
+- alias: "Medication Summary - Bedtime Report"
+  description: "Send daily medication adherence summary at 10 PM"
+  trigger:
+    - platform: time
+      at: "22:00:00"
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "📊 Today's Medication Summary"
+        message: >
+          Morning Pills: {{ 'Taken ✅' if is_state('binary_sensor.marc_med_morning', 'on') else 'Missed ❌' }}
+          Morning Puffer: {{ 'Taken ✅' if is_state('binary_sensor.marc_med_morning_puffer', 'on') else 'Missed ❌' }}
+          Lunch Pills: {{ 'Taken ✅' if is_state('binary_sensor.marc_med_lunch', 'on') else 'Missed ❌' }}
+          Evening Pills: {{ 'Taken ✅' if is_state('binary_sensor.marc_med_evening', 'on') else 'Missed ❌' }}
+          Evening Puffer: {{ 'Taken ✅' if is_state('binary_sensor.marc_med_evening_puffer', 'on') else 'Missed ❌' }}
+
+# ==========================================
+# PERFECT DAY CELEBRATION
+# ==========================================
+
+- alias: "Medication Celebration - Perfect Adherence"
+  description: "Celebrate when all medications taken for the day"
+  trigger:
+    - platform: state
+      entity_id: 
+        - binary_sensor.marc_med_morning
+        - binary_sensor.marc_med_morning_puffer
+        - binary_sensor.marc_med_lunch
+        - binary_sensor.marc_med_evening
+        - binary_sensor.marc_med_evening_puffer
+  condition:
+    - condition: state
+      entity_id: binary_sensor.marc_med_morning
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.marc_med_morning_puffer
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.marc_med_lunch
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.marc_med_evening
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.marc_med_evening_puffer
+      state: "on"
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "🎉 Perfect Medication Day!"
+        message: "All medications taken today! Great job staying healthy! 💪"
+        data:
+          push:
+            sound:
+              name: default
+
+# ==========================================
+# WEEKLY REFILL CHECK
+# ==========================================
+
+- alias: "Medication Check - Weekly Refill Status"
+  description: "Weekly summary of medications needing refills (every Sunday at 6 PM)"
+  trigger:
+    - platform: time
+      at: "18:00:00"
+  condition:
+    - condition: time
+      weekday:
+        - sun
+  action:
+    - service: notify.mobile_app_marcs_iphone_14
+      data:
+        title: "📅 Weekly Medication Check"
+        message: >
+          Check your medication dashboard for upcoming refills.
+          Make sure to request refills for any medications showing yellow or orange status.
