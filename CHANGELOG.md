@@ -5,178 +5,218 @@ All notable changes to Marc Med Tracker will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - 2025-02-21
+## [2.1.0] - 2026-03-29
 
 ### Added
-- **NEW SERVICE**: `update_stock` - Manually set current pill count
-  - Useful for physical inventory counts
-  - Correcting calculation errors
-  - Accounting for lost/dropped pills
-- **NEW SERVICE**: `update_doctor` - Change prescribing doctor name
-- **Daily Dose Tracking**: Red/green buttons for tracking doses
-  - Morning Pills tracker
-  - Lunch Pills tracker
-  - Evening Pills tracker
-  - Morning Puffer tracker
-  - Evening Puffer tracker
-  - Automatic midnight reset
-- **Detailed Information Panels**: Complete medication details dashboards
-- **Event System**: Events fired for stock updates and doctor changes
-- **Comprehensive Documentation**:
-  - UPDATE_STOCK_GUIDE.md - Stock management guide
-  - UPDATE_DOCTOR_GUIDE.md - Doctor update guide
-  - DOSE_TRACKING_GUIDE.md - Daily tracking guide
-  - DETAILS_PANEL_GUIDE.md - Dashboard setup
-  - TROUBLESHOOTING.md - Common issues and solutions
-  - COMPATIBILITY.md - Version compatibility matrix
-  - UPGRADE_NOTES.md - Migration instructions
+
+#### Complete Health Tracking Dashboard
+- **Blood Sugar Section** with automatic A1C calculator
+  - Tracks total test count since April 30, 2026
+  - Calculates average glucose level
+  - Auto-calculates estimated A1C when 21+ readings available
+  - Formula: (Average + 2.9) / 1.59
+  - Progress indicator showing tests needed for A1C
+
+- **Cardio-Vascular Section** with gauges and graphs
+  - Blood pressure gauges (systolic & diastolic) with color zones
+  - Heart rate and resting heart rate tracking
+  - O2 saturation monitoring
+  - 7-day trend graphs for BP and heart rate
+
+- **Sleep Tracking Section**
+  - Total sleep duration
+  - Core sleep hours
+  - Deep sleep hours
+  - Awake hours tracking
+  - Flights climbed
+  - 7-day sleep quality graph
+
+- **Activity Tracking Section**
+  - Steps and distance tracking
+  - Active calories burned
+  - Exercise time monitoring
+  - Stand time tracking
+  - Walking speed
+  - Body mass tracking
+  - 7-day activity trend graphs
+
+#### Dashboard Improvements
+- Shortcut button for main dashboard (`shortcut_button.yaml`)
+- 29 total cards organized in 6 major sections
+- All health metrics show current value + 7-day history
+- Color-coded gauges with safe/warning/danger zones
+
+#### Documentation
+- `DASHBOARD_INSTALLATION.md` - Complete step-by-step guide
+- Fixed "Expected an array value" error instructions
+- Video tutorial steps included
+- Troubleshooting for all common errors
 
 ### Changed
-- **BREAKING**: Renamed from `med_tracker` to `marc_med_tracker`
-  - Domain: `med_tracker` → `marc_med_tracker`
-  - Entity prefix: `med_` → `marc_med_`
-  - Service prefix: `med_tracker.*` → `marc_med_tracker.*`
-- **Updated for Home Assistant 2024.1.0+**:
-  - Modern type hints (`dict[str, Any]` instead of `Dict[str, Any]`)
-  - Added `from __future__ import annotations`
-  - Updated imports to use `ConfigType` and `DiscoveryInfoType`
-  - Added `_attr_has_entity_name = False` to entities
-  - Changed IoT class from `local_polling` to `calculated`
-- **Platform loading**: Fixed to work with YAML configuration
-- **Sensor names**: Changed from "Med X" to "Marc Med X"
+- Dashboard now includes health tracking alongside medications
+- Total card count increased from 13 to 29
+- Dashboard file size optimized for faster loading
 
 ### Fixed
-- Platform discovery for YAML-based configuration
-- Import errors with Home Assistant 2025.2+
-- Service registration in async_setup
+- Dashboard installation error ("Expected an array value")
+- Corrected YAML structure for view format
+- Clear instructions to DELETE existing YAML before pasting
 
-### Deprecated
-- None
+---
 
-### Removed
-- None
-
-### Security
-- None
-
-## [1.0.0] - 2025-01-15
+## [2.0.0] - 2026-03-28
 
 ### Added
-- Initial release
-- Basic medication tracking
-- Inventory management
-- Refill tracking
-- Service calls: `take_dose`, `refill`, `update_refills`
-- Sensor platform for medication inventory
-- Configuration via YAML
-- Automated stock calculations
-- Status indicators (OK, LOW, CRITICAL, OUT_OF_STOCK)
+
+#### Core Medication Tracking
+- **8 Medication Configuration**
+  - Metformin 500mg (2 tablets, twice daily)
+  - Jardiance 40mg (1 tablet, evening)
+  - Candesartan 16mg (1 tablet, morning)
+  - Rosuvastatin 10mg (1 tablet, morning)
+  - Pantoprazole 40mg (1 tablet, morning)
+  - Bisoprolol 2.5mg (1 tablet, morning)
+  - Spironolactone 60mg (0.5 tablet, morning)
+  - Zenhale Inhaler (1-2 puffs, twice daily)
+
+- **Prescriber Organization**
+  - NP T. Wakefield (5 medications)
+  - Dr. K. Ducet (3 medications)
+  - Last refilled dates: March 25 & February 1, 2026
+
+#### iPhone Notifications (19 Automations)
+- **Timed Reminders**
+  - 9:30 AM - Morning medications
+  - 2:30 PM - Lunch medications
+  - 7:30 PM - Evening medications
+
+- **Features**
+  - Actionable buttons (Mark as Taken / Snooze 15 min)
+  - Critical alerts bypass Do Not Disturb
+  - Daily summary at 10:00 PM
+  - Weekly refill check (Sunday 6:00 PM)
+  - Perfect adherence celebration
+
+- **Stock Alerts**
+  - Low stock warning (≤7 days)
+  - Critical alert (≤3 days) - bypasses DND
+  - Out of stock - 3 urgent alerts
+
+#### Dashboard
+- Daily medication schedule with red/green buttons
+- Progress percentage tracker
+- Medication inventory by prescriber
+- Active alerts with color coding
+- 30-day refill calendar
+- Quick statistics summary
+
+#### Documentation
+- `QUICK_START.md` - 15-minute setup guide
+- `MEDICATION_SCHEDULE.md` - Daily schedule reference
+- `NOTIFICATION_SETUP.md` - iPhone notification guide
+- `NOTIFICATION_REFERENCE.md` - Quick reference card
+- Complete example configurations
+
+### Changed
+- Repository structure to HACS-compliant format
+- Integration files moved to repository root
+- `content_in_root: true` in hacs.json
+
+### Technical
+- Integration validates with zero errors
+- All YAML files syntax-checked
+- Automation file: 19 automations validated
+- Configuration file: 8 medications validated
 
 ---
 
-## Version History Summary
+## [1.0.0] - Initial Development
 
-| Version | Date | Key Features |
-|---------|------|--------------|
-| 2.0.0 | 2025-02-21 | Stock updates, doctor changes, daily tracking, HA 2025.2 support |
-| 1.0.0 | 2025-01-15 | Initial release with basic tracking |
+### Added
+- Basic medication tracking integration
+- Sensor platform for inventory
+- Binary sensor platform for daily tracking
+- 7 core services
+- YAML configuration support
+- Basic documentation
 
 ---
 
-## Migration Guide
+## Versioning Guide
 
-### From 1.0.0 to 2.0.0
+### Version Number Format: MAJOR.MINOR.PATCH
 
-**Entity ID Changes:**
-```yaml
-# Old:
-sensor.med_aspirin
-binary_sensor.med_morning
+**MAJOR** version (X.0.0):
+- Incompatible API changes
+- Major feature overhaul
+- Breaking changes requiring user action
 
-# New:
-sensor.marc_med_aspirin
-binary_sensor.marc_med_morning
-```
+**MINOR** version (2.X.0):
+- New features added
+- Backwards compatible
+- New functionality that doesn't break existing setups
 
-**Service Changes:**
-```yaml
-# Old:
-service: med_tracker.take_dose
+**PATCH** version (2.1.X):
+- Bug fixes
+- Documentation updates
+- Minor improvements
+- Backwards compatible
 
-# New:
-service: marc_med_tracker.take_dose
-```
+---
 
-**Configuration Changes:**
-```yaml
-# Old:
-med_tracker:
-  medications: [...]
+## Upgrade Notes
 
-# New:
-marc_med_tracker:
-  medications: [...]
-```
+### From 2.0.0 to 2.1.0
+
+**No breaking changes** - fully backwards compatible
+
+**New Features:**
+- Health tracking sections (optional)
+- Shortcut button for main dashboard
 
 **Action Required:**
-1. Update `configuration.yaml` - change `med_tracker:` to `marc_med_tracker:`
-2. Update all automations - replace `med_tracker.` with `marc_med_tracker.`
-3. Update dashboard cards - replace `med_` with `marc_med_` in entity IDs
-4. Restart Home Assistant
+- None - existing installations continue to work
+- To use new features: Update dashboard using new `complete_dashboard.yaml`
 
-**Data Migration:**
-- All medication data is preserved
-- Stock counts carry over automatically
-- No manual data migration needed
-
-See [UPGRADE_NOTES.md](UPGRADE_NOTES.md) for detailed instructions.
+**Health Sensors:**
+If you don't have health sensors configured, the health sections will show "unavailable" but medication tracking continues to work normally.
 
 ---
 
-## Upcoming Features (Planned)
+## Coming Soon (Planned Features)
 
-### v2.1.0
-- [ ] Config flow support (UI configuration)
-- [ ] Medication categories/tags
-- [ ] Multiple daily schedules (AM/PM variations)
+### Version 2.2.0 (Planned)
+- [ ] Config flow (UI-based configuration)
+- [ ] Lovelace card for medication details
+- [ ] Multiple user support
+- [ ] Custom refill reminder times per medication
+
+### Version 2.3.0 (Planned)
 - [ ] Medication interaction warnings
-- [ ] Photo support for pill identification
-- [ ] Barcode scanning integration
+- [ ] Doctor appointment tracking
+- [ ] Prescription renewal reminders
+- [ ] Insurance coverage tracking
 
-### v2.2.0
-- [ ] Calendar integration for refill dates
-- [ ] Shopping list integration
-- [ ] Medication history graphs
-- [ ] Adherence statistics
-- [ ] Export medication records
-- [ ] Multi-language support
-
-### v3.0.0
-- [ ] Full config flow migration
-- [ ] Cloud sync support (optional)
-- [ ] Mobile app companion
-- [ ] Advanced reporting
-- [ ] Integration with pharmacy APIs
-- [ ] Health app integration
+### Version 3.0.0 (Future)
+- [ ] Mobile app integration
+- [ ] Barcode scanning for medications
+- [ ] Photo upload for pills
+- [ ] AI-powered medication identification
 
 ---
 
-## Support
+## Support & Feedback
 
-For issues, questions, or feature requests:
-- Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
-- Review [closed issues](https://github.com/yourusername/marc-med-tracker/issues?q=is%3Aissue+is%3Aclosed)
-- Open a [new issue](https://github.com/yourusername/marc-med-tracker/issues/new)
-
----
-
-## Contributors
-
-Thank you to all contributors who have helped make Marc Med Tracker better!
-
-<!-- Add contributors here -->
+- **Bug Reports**: GitHub Issues
+- **Feature Requests**: GitHub Issues with "enhancement" label
+- **Questions**: GitHub Discussions
+- **Documentation**: See `docs/` folder
 
 ---
 
-[2.0.0]: https://github.com/yourusername/marc-med-tracker/releases/tag/v2.0.0
-[1.0.0]: https://github.com/yourusername/marc-med-tracker/releases/tag/v1.0.0
+## Links
+
+- **GitHub**: https://github.com/marc50ca/marc-med-tracker
+- **HACS**: Install via custom repository
+- **Documentation**: https://github.com/marc50ca/marc-med-tracker/tree/main/docs
+- **Examples**: https://github.com/marc50ca/marc-med-tracker/tree/main/examples

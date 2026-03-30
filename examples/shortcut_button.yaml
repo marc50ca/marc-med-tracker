@@ -1,0 +1,25 @@
+# Quick Access Button - Add to Your Main Dashboard
+# This creates a large button that opens your Medication & Health dashboard
+
+# Copy this SINGLE CARD and add it to your main Overview dashboard
+
+type: button
+name: 💊 Medications & Health
+icon: mdi:pill
+tap_action:
+  action: navigate
+  navigation_path: /lovelace/medication-health-hub
+show_state: false
+show_name: true
+card_mod:
+  style: |
+    ha-card {
+      height: 120px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    ha-card:active {
+      transform: scale(0.98);
+    }
