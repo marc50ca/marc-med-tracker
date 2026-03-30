@@ -83,8 +83,13 @@ marc_med_tracker:
       initial_stock: 45          # 90 days x 0.5 tablet = 45 tablets
       notes: "0.5 tablet (half) once daily in the morning"
     
+    # ========================================
+    # DR. K. SAFKA
+    # Last Refilled: February 1, 2026
+    # ========================================
+    
     - name: "Zenhale Inhaler"
-      prescribing_doctor: "Dr. K. Ducet"
+      prescribing_doctor: "Dr. K. Safka"
       refills_left: 2
       last_refilled: "2026-02-01"
       strength: "100/6 mcg"

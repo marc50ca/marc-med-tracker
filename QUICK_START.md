@@ -14,6 +14,8 @@ You're tracking **8 medications**:
 **Dr. K. Ducet (Refilled February 1, 2026):**
 - Bisoprolol 2.5mg (1 tablet, morning)
 - Spironolactone 60mg (0.5 tablet/HALF, morning)
+
+**Dr. K. Safka (Refilled February 1, 2026):**
 - Zenhale Inhaler (1-2 puffs, twice daily)
 
 **Daily Total:** 9 tablets + 2-4 puffs

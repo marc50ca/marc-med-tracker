@@ -93,6 +93,12 @@ Medications:
 Medications:
 - Bisoprolol 2.5mg
 - Spironolactone 60mg (take half)
+
+### Dr. K. Safka
+**Last Refilled:** February 1, 2026  
+**Refills Remaining:** 2
+
+Medication:
 - Zenhale Inhaler 100/6mcg
 
 ---
@@ -115,7 +121,7 @@ Medications:
 - **Pantoprazole** - Reduces stomach acid (PPI)
 
 ### Respiratory
-- **Zenhale** - Controls asthma/COPD symptoms
+- **Zenhale** - Controls asthma/COPD symptoms (Dr. K. Safka)
 
 ---
 
