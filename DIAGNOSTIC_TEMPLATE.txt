@@ -1,0 +1,57 @@
+"""
+Diagnostic Script for Marc Med Tracker
+Run this in Developer Tools -> Template to check integration status
+"""
+
+# Copy and paste this into Developer Tools -> Template
+
+{% set domain = "marc_med_tracker" %}
+
+## Integration Status Check
+
+**Domain Data Exists:** {{ domain in hass.data }}
+
+{% if domain in hass.data %}
+**Data Keys:** {{ hass.data[domain].keys() | list }}
+
+{% if "medications" in hass.data[domain] %}
+**Medications Loaded:** {{ hass.data[domain]["medications"].keys() | list | length }}
+{% for med_id in hass.data[domain]["medications"].keys() | list %}
+- {{ med_id }}
+{% endfor %}
+{% endif %}
+
+{% if "dose_tracking" in hass.data[domain] %}
+**Dose Tracking Initialized:** Yes
+**Dose States:** {{ hass.data[domain]["dose_tracking"] }}
+{% else %}
+**Dose Tracking Initialized:** No
+{% endif %}
+
+{% endif %}
+
+## Expected Binary Sensors
+
+{% set expected_sensors = [
+  'binary_sensor.marc_med_morning',
+  'binary_sensor.marc_med_lunch',
+  'binary_sensor.marc_med_evening',
+  'binary_sensor.marc_med_morning_puffer',
+  'binary_sensor.marc_med_evening_puffer'
+] %}
+
+{% for sensor in expected_sensors %}
+- {{ sensor }}: {% if states(sensor) != 'unknown' %}✅ EXISTS ({{ states(sensor) }}){% else %}❌ MISSING{% endif %}
+{% endfor %}
+
+## All marc_med Entities
+
+{% for state in states %}
+  {% if 'marc_med' in state.entity_id %}
+- {{ state.entity_id }} ({{ state.state }})
+  {% endif %}
+{% endfor %}
+
+## Integration in Integrations List
+
+**In custom_components:** {{ 'marc_med_tracker' in integration_entities }}

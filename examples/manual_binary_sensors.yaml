@@ -1,0 +1,214 @@
+# Manual Binary Sensor Configuration - MODERN SYNTAX
+# WORKAROUND if integration binary sensors aren't loading
+# Uses MODERN template syntax (not legacy platform: template)
+
+# Add this to your configuration.yaml if the integration binary sensors don't appear
+
+template:
+  - binary_sensor:
+      - name: "Marc Med Morning Pills"
+        unique_id: marc_med_morning_manual
+        state: "{{ is_state('input_boolean.marc_med_morning_helper', 'on') }}"
+        icon: mdi:weather-sunset-up
+        attributes:
+          dose_type: "morning"
+          taken_today: "{{ is_state('input_boolean.marc_med_morning_helper', 'on') }}"
+      
+      - name: "Marc Med Lunch Pills"
+        unique_id: marc_med_lunch_manual
+        state: "{{ is_state('input_boolean.marc_med_lunch_helper', 'on') }}"
+        icon: mdi:weather-sunny
+        attributes:
+          dose_type: "lunch"
+          taken_today: "{{ is_state('input_boolean.marc_med_lunch_helper', 'on') }}"
+      
+      - name: "Marc Med Evening Pills"
+        unique_id: marc_med_evening_manual
+        state: "{{ is_state('input_boolean.marc_med_evening_helper', 'on') }}"
+        icon: mdi:weather-sunset-down
+        attributes:
+          dose_type: "evening"
+          taken_today: "{{ is_state('input_boolean.marc_med_evening_helper', 'on') }}"
+      
+      - name: "Marc Med Morning Puffer"
+        unique_id: marc_med_morning_puffer_manual
+        state: "{{ is_state('input_boolean.marc_med_morning_puffer_helper', 'on') }}"
+        icon: mdi:spray
+        attributes:
+          dose_type: "morning_puffer"
+          taken_today: "{{ is_state('input_boolean.marc_med_morning_puffer_helper', 'on') }}"
+      
+      - name: "Marc Med Evening Puffer"
+        unique_id: marc_med_evening_puffer_manual
+        state: "{{ is_state('input_boolean.marc_med_evening_puffer_helper', 'on') }}"
+        icon: mdi:spray
+        attributes:
+          dose_type: "evening_puffer"
+          taken_today: "{{ is_state('input_boolean.marc_med_evening_puffer_helper', 'on') }}"
+
+# Required helper input_booleans
+# These store the actual state
+
+input_boolean:
+  marc_med_morning_helper:
+    name: Morning Pills Helper
+    initial: false
+    icon: mdi:pill
+  
+  marc_med_lunch_helper:
+    name: Lunch Pills Helper
+    initial: false
+    icon: mdi:pill
+  
+  marc_med_evening_helper:
+    name: Evening Pills Helper
+    initial: false
+    icon: mdi:pill
+  
+  marc_med_morning_puffer_helper:
+    name: Morning Puffer Helper
+    initial: false
+    icon: mdi:spray
+  
+  marc_med_evening_puffer_helper:
+    name: Evening Puffer Helper
+    initial: false
+    icon: mdi:spray
+
+# Automation to reset at midnight
+
+automation:
+  - alias: "Reset Medication Trackers at Midnight"
+    description: "Reset all medication dose trackers at midnight"
+    trigger:
+      - platform: time
+        at: "00:00:00"
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id:
+            - input_boolean.marc_med_morning_helper
+            - input_boolean.marc_med_lunch_helper
+            - input_boolean.marc_med_evening_helper
+            - input_boolean.marc_med_morning_puffer_helper
+            - input_boolean.marc_med_evening_puffer_helper
+
+# Scripts to toggle (for dashboard buttons)
+
+script:
+  toggle_morning_pills:
+    alias: "Toggle Morning Pills"
+    sequence:
+      - service: input_boolean.toggle
+        target:
+          entity_id: input_boolean.marc_med_morning_helper
+  
+  toggle_lunch_pills:
+    alias: "Toggle Lunch Pills"
+    sequence:
+      - service: input_boolean.toggle
+        target:
+          entity_id: input_boolean.marc_med_lunch_helper
+  
+  toggle_evening_pills:
+    alias: "Toggle Evening Pills"
+    sequence:
+      - service: input_boolean.toggle
+        target:
+          entity_id: input_boolean.marc_med_evening_helper
+  
+  toggle_morning_puffer:
+    alias: "Toggle Morning Puffer"
+    sequence:
+      - service: input_boolean.toggle
+        target:
+          entity_id: input_boolean.marc_med_morning_puffer_helper
+  
+  toggle_evening_puffer:
+    alias: "Toggle Evening Puffer"
+    sequence:
+      - service: input_boolean.toggle
+        target:
+          entity_id: input_boolean.marc_med_evening_puffer_helper
+
+# =====================================================
+# INSTALLATION INSTRUCTIONS
+# =====================================================
+#
+# 1. Copy this ENTIRE file content
+# 2. Paste at the END of your configuration.yaml
+# 3. Save the file
+# 4. Go to Developer Tools -> YAML
+# 5. Click "Check Configuration"
+# 6. If valid, click "Restart" (NOT reload!)
+# 7. Wait 2 minutes
+# 8. Check Developer Tools -> States
+# 9. Filter by "marc_med"
+#
+# You should now see:
+# - binary_sensor.marc_med_morning_pills ✅
+# - binary_sensor.marc_med_lunch_pills ✅
+# - binary_sensor.marc_med_evening_pills ✅
+# - binary_sensor.marc_med_morning_puffer ✅
+# - binary_sensor.marc_med_evening_puffer ✅
+#
+# Plus 5 helper input_booleans (you can hide these)
+#
+# IMPORTANT: Entity names with modern syntax:
+# binary_sensor.marc_med_morning_pills (not marc_med_morning)
+# binary_sensor.marc_med_lunch_pills
+# binary_sensor.marc_med_evening_pills
+# binary_sensor.marc_med_morning_puffer
+# binary_sensor.marc_med_evening_puffer
+#
+# =====================================================
+# DASHBOARD USAGE - EASIEST METHOD
+# =====================================================
+#
+# Use input_booleans directly (simplest, no scripts needed):
+#
+# ```yaml
+# type: entities
+# title: "📅 Today's Medications"
+# state_color: true
+# entities:
+#   - entity: input_boolean.marc_med_morning_helper
+#     name: "☀️ Morning Pills (6 tablets)"
+#   - entity: input_boolean.marc_med_morning_puffer_helper
+#     name: "☀️ Morning Puffer"
+#   - entity: input_boolean.marc_med_lunch_helper
+#     name: "🌞 Lunch Pills (2 tablets)"
+#   - entity: input_boolean.marc_med_evening_helper
+#     name: "🌙 Evening Pills (1 tablet)"
+#   - entity: input_boolean.marc_med_evening_puffer_helper
+#     name: "🌙 Evening Puffer"
+# ```
+#
+# Just tap to toggle! Red = not taken, Green = taken
+#
+# =====================================================
+# ALTERNATIVE - Use Binary Sensors with Scripts
+# =====================================================
+#
+# ```yaml
+# type: entities
+# entities:
+#   - entity: binary_sensor.marc_med_morning_pills
+#     tap_action:
+#       action: call-service
+#       service: script.toggle_morning_pills
+# ```
+#
+# =====================================================
+# WHY THIS WORKS
+# =====================================================
+#
+# - Uses MODERN template: syntax (not legacy platform:)
+# - No deprecation warnings
+# - Works with current and future Home Assistant versions
+# - 100% reliable - uses only built-in components
+#
+# The medication sensors (sensor.marc_med_*) still come from
+# the integration - this only replaces the binary dose trackers.
+#
+# =====================================================

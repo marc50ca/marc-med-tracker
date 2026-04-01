@@ -1,0 +1,364 @@
+# Complete Dashboard Card - Apple Health Integration
+# Updated with hae.marchealthsync sensors
+# Copy each card separately using the card-by-card method
+
+# ========================================
+# CARD 1: Today's Medication Schedule
+# ========================================
+
+type: entities
+title: "📅 Today's Medications"
+state_color: true
+entities:
+  - entity: input_boolean.marc_med_morning_helper
+    name: "☀️ Morning Pills (6 tablets)"
+  - entity: input_boolean.marc_med_morning_puffer_helper
+    name: "☀️ Morning Puffer"
+  - entity: input_boolean.marc_med_lunch_helper
+    name: "🌞 Lunch Pills (2 tablets)"
+  - entity: input_boolean.marc_med_evening_helper
+    name: "🌙 Evening Pills (1 tablet)"
+  - entity: input_boolean.marc_med_evening_puffer_helper
+    name: "🌙 Evening Puffer"
+
+# ========================================
+# CARD 2: Daily Progress
+# ========================================
+
+type: markdown
+content: |
+  {% set taken = [
+    states('input_boolean.marc_med_morning_helper'),
+    states('input_boolean.marc_med_morning_puffer_helper'),
+    states('input_boolean.marc_med_lunch_helper'),
+    states('input_boolean.marc_med_evening_helper'),
+    states('input_boolean.marc_med_evening_puffer_helper')
+  ] | select('eq', 'on') | list | count %}
+  {% set percent = (taken / 5 * 100) | round(0) %}
+  
+  <div style="text-align: center; padding: 25px; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+    <h1 style="margin: 0; font-size: 48px;">{{ percent }}%</h1>
+    <h3 style="margin: 10px 0;">{{ taken }} of 5 doses completed today</h3>
+    {% if percent == 100 %}
+    <p style="font-size: 28px;">🎉 Perfect adherence!</p>
+    {% elif percent >= 60 %}
+    <p style="font-size: 24px;">👍 Keep it up!</p>
+    {% else %}
+    <p style="font-size: 24px;">⏰ {{ 5 - taken }} more to go</p>
+    {% endif %}
+  </div>
+
+# ========================================
+# CARD 3: Blood Glucose
+# ========================================
+
+type: entities
+title: "🩸 Blood Glucose"
+state_color: true
+entities:
+  - entity: hae.marchealthsync_blood_glucose
+    name: "Blood Glucose"
+    icon: mdi:diabetes
+
+# ========================================
+# CARD 4: Blood Glucose Graph
+# ========================================
+
+type: history-graph
+title: "Blood Glucose History (7 Days)"
+hours_to_show: 168
+entities:
+  - entity: hae.marchealthsync_blood_glucose
+    name: "Blood Glucose"
+
+# ========================================
+# CARD 5: Cardio-Vascular Metrics
+# ========================================
+
+type: entities
+title: "❤️ Cardio-Vascular"
+state_color: true
+entities:
+  - entity: hae.marchealthsync_blood_pressure_diastolic
+    name: "Blood Pressure - Diastolic"
+    icon: mdi:heart-pulse
+  - entity: hae.marchealthsync_blood_pressure_systolic
+    name: "Blood Pressure - Systolic"
+    icon: mdi:heart-pulse
+  - entity: hae.marchealthsync_blood_oxygen_saturation
+    name: "Blood Oxygen Saturation"
+    icon: mdi:lungs
+  - entity: hae.marchealthsync_cardio_recovery
+    name: "Cardio Recovery"
+    icon: mdi:heart-flash
+  - entity: hae.marchealthsync_heart_rate_avg
+    name: "Heart Rate - Average"
+    icon: mdi:heart
+  - entity: hae.marchealthsync_heart_rate_max
+    name: "Heart Rate - Maximum"
+    icon: mdi:heart
+  - entity: hae.marchealthsync_heart_rate_min
+    name: "Heart Rate - Minimum"
+    icon: mdi:heart
+  - entity: hae.marchealthsync_heart_rate_variability
+    name: "Heart Rate Variability"
+    icon: mdi:heart-cog
+  - entity: hae.marchealthsync_respiratory_rate
+    name: "Respiratory Rate"
+    icon: mdi:lungs
+  - entity: hae.marchealthsync_resting_heart_rate
+    name: "Resting Heart Rate"
+    icon: mdi:heart
+
+# ========================================
+# CARD 6: Blood Pressure Graph
+# ========================================
+
+type: history-graph
+title: "Blood Pressure Trends (7 Days)"
+hours_to_show: 168
+entities:
+  - entity: hae.marchealthsync_blood_pressure_systolic
+    name: "Systolic"
+  - entity: hae.marchealthsync_blood_pressure_diastolic
+    name: "Diastolic"
+
+# ========================================
+# CARD 7: Heart Rate Graph
+# ========================================
+
+type: history-graph
+title: "Heart Rate Trends (7 Days)"
+hours_to_show: 168
+entities:
+  - entity: hae.marchealthsync_heart_rate_avg
+    name: "Average HR"
+  - entity: hae.marchealthsync_heart_rate_max
+    name: "Max HR"
+  - entity: hae.marchealthsync_heart_rate_min
+    name: "Min HR"
+  - entity: hae.marchealthsync_resting_heart_rate
+    name: "Resting HR"
+
+# ========================================
+# CARD 8: Sleep Metrics
+# ========================================
+
+type: entities
+title: "😴 Sleep"
+state_color: true
+entities:
+  - entity: hae.marchealthsync_apple_sleeping_wrist_temperature
+    name: "Sleeping Wrist Temperature"
+    icon: mdi:thermometer
+  - entity: hae.marchealthsync_flights_climbed
+    name: "Flights Climbed"
+    icon: mdi:stairs-up
+  - entity: hae.marchealthsync_sleep_analysis_awake
+    name: "Sleep - Awake"
+    icon: mdi:sleep-off
+  - entity: hae.marchealthsync_sleep_analysis_core
+    name: "Sleep - Core"
+    icon: mdi:bed
+  - entity: hae.marchealthsync_sleep_analysis_deep
+    name: "Sleep - Deep"
+    icon: mdi:sleep
+  - entity: hae.marchealthsync_sleep_analysis_inbed
+    name: "Sleep - In Bed"
+    icon: mdi:bed-clock
+  - entity: hae.marchealthsync_sleep_analysis_rem
+    name: "Sleep - REM"
+    icon: mdi:sleep
+  - entity: hae.marchealthsync_sleep_analysis_sleep
+    name: "Sleep - Total Sleep"
+    icon: mdi:sleep
+
+# ========================================
+# CARD 9: Sleep Graph
+# ========================================
+
+type: history-graph
+title: "Sleep Quality (7 Days)"
+hours_to_show: 168
+entities:
+  - entity: hae.marchealthsync_sleep_analysis_sleep
+    name: "Total Sleep"
+  - entity: hae.marchealthsync_sleep_analysis_core
+    name: "Core"
+  - entity: hae.marchealthsync_sleep_analysis_deep
+    name: "Deep"
+  - entity: hae.marchealthsync_sleep_analysis_rem
+    name: "REM"
+
+# ========================================
+# CARD 10: Weight Metrics
+# ========================================
+
+type: entities
+title: "⚖️ Weight & Body Composition"
+state_color: true
+entities:
+  - entity: hae.marchealthsync_body_mass_index
+    name: "Body Mass Index (BMI)"
+    icon: mdi:human
+  - entity: hae.marchealthsync_lean_body_mass
+    name: "Lean Body Mass"
+    icon: mdi:weight-lifter
+  - entity: hae.marchealthsync_weight_body_mass
+    name: "Weight (Body Mass)"
+    icon: mdi:weight
+
+# ========================================
+# CARD 11: Weight Graph
+# ========================================
+
+type: history-graph
+title: "Weight Trends (30 Days)"
+hours_to_show: 720
+entities:
+  - entity: hae.marchealthsync_weight_body_mass
+    name: "Weight"
+  - entity: hae.marchealthsync_body_mass_index
+    name: "BMI"
+
+# ========================================
+# CARD 12: Activity Metrics
+# ========================================
+
+type: entities
+title: "🏃 Activity"
+state_color: true
+entities:
+  - entity: hae.marchealthsync_active_energy
+    name: "Active Energy"
+    icon: mdi:fire
+  - entity: hae.marchealthsync_apple_exercise_time
+    name: "Apple Exercise Time"
+    icon: mdi:run
+  - entity: hae.marchealthsync_apple_stand_hour
+    name: "Apple Stand Hour"
+    icon: mdi:human-handsup
+  - entity: hae.marchealthsync_apple_stand_time
+    name: "Apple Stand Time"
+    icon: mdi:human-handsup
+  - entity: hae.marchealthsync_environment_audio_exposure
+    name: "Environment Audio Exposure"
+    icon: mdi:ear-hearing
+  - entity: hae.marchealthsync_flights_climbed
+    name: "Flights Climbed"
+    icon: mdi:stairs-up
+  - entity: hae.marchealthsync_headphone_audio_exposure
+    name: "Headphone Audio Exposure"
+    icon: mdi:headphones
+  - entity: hae.marchealthsync_stair_speed_down
+    name: "Stair Speed - Down"
+    icon: mdi:stairs-down
+  - entity: hae.marchealthsync_stair_speed_up
+    name: "Stair Speed - Up"
+    icon: mdi:stairs-up
+  - entity: hae.marchealthsync_step_count
+    name: "Step Count"
+    icon: mdi:walk
+  - entity: hae.marchealthsync_time_in_daylight
+    name: "Time in Daylight"
+    icon: mdi:white-balance-sunny
+  - entity: hae.marchealthsync_walking_running_distance
+    name: "Walking/Running Distance"
+    icon: mdi:map-marker-distance
+  - entity: hae.marchealthsync_walking_speed
+    name: "Walking Speed"
+    icon: mdi:speedometer
+
+# ========================================
+# CARD 13: Activity Graph - Steps & Distance
+# ========================================
+
+type: history-graph
+title: "Daily Activity (7 Days)"
+hours_to_show: 168
+entities:
+  - entity: hae.marchealthsync_step_count
+    name: "Steps"
+  - entity: hae.marchealthsync_walking_running_distance
+    name: "Distance"
+
+# ========================================
+# CARD 14: Activity Graph - Exercise
+# ========================================
+
+type: history-graph
+title: "Exercise Metrics (7 Days)"
+hours_to_show: 168
+entities:
+  - entity: hae.marchealthsync_apple_exercise_time
+    name: "Exercise Time"
+  - entity: hae.marchealthsync_active_energy
+    name: "Active Energy"
+
+# ========================================
+# CARD 15: NP T. Wakefield Medications
+# ========================================
+
+type: entities
+title: "💊 NP T. Wakefield"
+state_color: true
+entities:
+  - entity: sensor.marc_med_metformin
+    name: "Metformin 500mg"
+  - entity: sensor.marc_med_jardiance
+    name: "Jardiance 40mg"
+  - entity: sensor.marc_med_candesartan
+    name: "Candesartan 16mg"
+  - entity: sensor.marc_med_rosuvastatin
+    name: "Rosuvastatin 10mg"
+  - entity: sensor.marc_med_pantoprazole
+    name: "Pantoprazole 40mg"
+
+# ========================================
+# CARD 16: Dr. K. Ducet Medications
+# ========================================
+
+type: entities
+title: "❤️ Dr. K. Ducet"
+state_color: true
+entities:
+  - entity: sensor.marc_med_bisoprolol
+    name: "Bisoprolol 2.5mg"
+  - entity: sensor.marc_med_spironolactone
+    name: "Spironolactone 60mg (half)"
+
+# ========================================
+# CARD 17: Dr. K. Safka Medications
+# ========================================
+
+type: entities
+title: "🫁 Dr. K. Safka"
+state_color: true
+entities:
+  - entity: sensor.marc_med_zenhale_inhaler
+    name: "Zenhale Inhaler"
+
+# ========================================
+# INSTALLATION NOTES
+# ========================================
+#
+# Total: 17 cards organized by category
+#
+# Sections:
+# 1. Medications (2 cards) - Schedule & Progress
+# 2. Blood Glucose (2 cards) - Current & Graph
+# 3. Cardio-Vascular (3 cards) - Metrics & Graphs
+# 4. Sleep (2 cards) - Metrics & Graph
+# 5. Weight (2 cards) - Metrics & Graph
+# 6. Activity (3 cards) - Metrics & Graphs
+# 7. Medication Inventory (3 cards) - By Prescriber
+#
+# All sensors sorted alphabetically within each section
+# No duplicates
+#
+# To install:
+# - Use card-by-card method (docs/DASHBOARD_SIMPLE_INSTALL.md)
+# - Add each card separately via Add Card → Manual
+# - Copy/paste one card at a time
+# - Arrange in your preferred order
+#
