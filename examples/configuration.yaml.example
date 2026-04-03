@@ -94,9 +94,9 @@ marc_med_tracker:
       last_refilled: "2026-02-01"
       strength: "100/6 mcg"
       doses_per_day: 2          # Morning and evening
-      pills_per_dose: 2          # 1-2 puffs (using max of 2)
-      initial_stock: 120         # 60 doses x 2 puffs = 120 puffs total
-      notes: "1-2 puffs twice daily - morning and evening, rinse mouth after use"
+      pills_per_dose: 1          # 1 puff each time
+      initial_stock: 200         # 200 doses per inhaler x 1 puff = 200 puffs total
+      notes: "1 puff twice daily - morning and evening, rinse mouth after use. Each inhaler contains 200 doses."
 
 # ========================================
 # SETUP COMPLETE

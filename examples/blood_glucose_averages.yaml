@@ -1,0 +1,85 @@
+# Blood Glucose Average Sensors
+# Add this to your configuration.yaml to enable 7, 30, and 90 day averages
+
+# These sensors calculate rolling averages from your blood glucose readings
+# Requires the statistics integration (built into Home Assistant)
+
+sensor:
+  # 7-Day Average
+  - platform: statistics
+    name: "Blood Glucose 7-Day Average"
+    entity_id: hae.marchealthsync_blood_glucose
+    state_characteristic: mean
+    max_age:
+      days: 7
+    sampling_size: 500
+    precision: 1
+  
+  # 30-Day Average
+  - platform: statistics
+    name: "Blood Glucose 30-Day Average"
+    entity_id: hae.marchealthsync_blood_glucose
+    state_characteristic: mean
+    max_age:
+      days: 30
+    sampling_size: 1000
+    precision: 1
+  
+  # 90-Day Average  
+  - platform: statistics
+    name: "Blood Glucose 90-Day Average"
+    entity_id: hae.marchealthsync_blood_glucose
+    state_characteristic: mean
+    max_age:
+      days: 90
+    sampling_size: 3000
+    precision: 1
+
+# =====================================================
+# INSTALLATION INSTRUCTIONS
+# =====================================================
+#
+# 1. Copy the sensor: section above
+# 2. Add to your configuration.yaml
+# 3. If you already have sensor: in your config, merge these into it
+# 4. Save the file
+# 5. Restart Home Assistant
+# 6. Wait a few hours for data to accumulate
+#
+# The sensors will appear as:
+# - sensor.blood_glucose_7_day_average
+# - sensor.blood_glucose_30_day_average
+# - sensor.blood_glucose_90_day_average
+#
+# Note: These need historical data to calculate averages.
+# They will show "unknown" until enough readings are available.
+#
+# Recommended: Test blood glucose 3 times daily:
+# - Morning (fasting)
+# - 2 hours after lunch
+# - Before bed
+#
+# This gives you 21 readings per week for better averages.
+#
+# =====================================================
+# DASHBOARD USAGE
+# =====================================================
+#
+# The dashboard card automatically uses these sensors.
+# Once they appear, the averages will display in the
+# colored boxes on Card 3A.
+#
+# =====================================================
+# CUSTOMIZATION
+# =====================================================
+#
+# To change the time periods:
+# - Change max_age: days value
+# - Adjust sampling_size (roughly 10x the days)
+#
+# To change precision:
+# - precision: 0 for whole numbers
+# - precision: 1 for one decimal place
+# - precision: 2 for two decimal places
+#
+# =====================================================

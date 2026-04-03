@@ -12,9 +12,9 @@
 | **Pantoprazole** | 40mg x 1 tablet | NP T. Wakefield | Digestive health |
 | **Bisoprolol** | 2.5mg x 1 tablet | Dr. K. Ducet | Heart health |
 | **Spironolactone** | 60mg x **0.5 tablet (HALF)** | Dr. K. Ducet | **Cut tablet in half** |
-| **Zenhale Inhaler** | **1-2 puffs** | Dr. K. Ducet | **Rinse mouth after!** |
+| **Zenhale Inhaler** | **1 puff** | Dr. K. Safka | **Rinse mouth after!** |
 
-**Morning Total:** 6 tablets + 1-2 puffs
+**Morning Total:** 6 tablets + 1 puff
 
 ---
 
@@ -37,18 +37,18 @@
 | Medication | Dosage | Prescriber | Notes |
 |------------|--------|------------|-------|
 | **Jardiance** | 40mg x 1 tablet | NP T. Wakefield | Diabetes medication |
-| **Zenhale Inhaler** | **1-2 puffs** | Dr. K. Ducet | **Rinse mouth after!** |
+| **Zenhale Inhaler** | **1 puff** | Dr. K. Safka | **Rinse mouth after!** |
 
-**Evening Total:** 1 tablet + 1-2 puffs
+**Evening Total:** 1 tablet + 1 puff
 
 ---
 
 ## Daily Summary
 
-- **Morning:** 6 tablets + 1-2 puffs
+- **Morning:** 6 tablets + 1 puff
 - **Lunch:** 2 tablets
-- **Evening:** 1 tablet + 1-2 puffs
-- **Daily Total:** **9 tablets** + **2-4 puffs**
+- **Evening:** 1 tablet + 1 puff
+- **Daily Total:** **9 tablets** + **2 puffs**
 
 ---
 

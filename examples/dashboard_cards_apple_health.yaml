@@ -49,16 +49,95 @@ content: |
   </div>
 
 # ========================================
-# CARD 3: Blood Glucose
+# CARD 3: Blood Glucose - 3 Daily Readings
 # ========================================
 
 type: entities
-title: "🩸 Blood Glucose"
+title: "🩸 Blood Glucose - Today's Readings"
 state_color: true
 entities:
   - entity: hae.marchealthsync_blood_glucose
-    name: "Blood Glucose"
+    name: "Current Reading"
     icon: mdi:diabetes
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - entity_id: hae.marchealthsync_blood_glucose
+          options:
+            type: custom:multiple-entity-row
+            name: "Last 3 Readings"
+            state_header: "Latest"
+            entities:
+              - attribute: history_1
+                name: "2nd"
+              - attribute: history_2
+                name: "3rd"
+
+# ========================================
+# CARD 3A: Blood Glucose Averages
+# ========================================
+
+type: markdown
+content: |
+  ## 📊 Blood Glucose Averages
+  
+  {% set sensor = 'hae.marchealthsync_blood_glucose' %}
+  {% set readings_7d = [] %}
+  {% set readings_30d = [] %}
+  {% set readings_90d = [] %}
+  
+  {# Get readings from the last 90 days #}
+  {% set now_ts = now().timestamp() %}
+  {% set day_7 = now_ts - (7 * 86400) %}
+  {% set day_30 = now_ts - (30 * 86400) %}
+  {% set day_90 = now_ts - (90 * 86400) %}
+  
+  {# Note: This requires history statistics or similar #}
+  {# Simplified version showing current approach #}
+  
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+    <div style="padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white; text-align: center;">
+      <div style="font-size: 14px; opacity: 0.9;">7-Day Average</div>
+      <div style="font-size: 36px; font-weight: bold; margin: 10px 0;">
+        {% if states('sensor.blood_glucose_7day_avg') != 'unknown' %}
+          {{ states('sensor.blood_glucose_7day_avg') }}
+        {% else %}
+          --
+        {% endif %}
+      </div>
+      <div style="font-size: 12px; opacity: 0.8;">mg/dL</div>
+    </div>
+    
+    <div style="padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; color: white; text-align: center;">
+      <div style="font-size: 14px; opacity: 0.9;">30-Day Average</div>
+      <div style="font-size: 36px; font-weight: bold; margin: 10px 0;">
+        {% if states('sensor.blood_glucose_30day_avg') != 'unknown' %}
+          {{ states('sensor.blood_glucose_30day_avg') }}
+        {% else %}
+          --
+        {% endif %}
+      </div>
+      <div style="font-size: 12px; opacity: 0.8;">mg/dL</div>
+    </div>
+    
+    <div style="padding: 20px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; color: white; text-align: center;">
+      <div style="font-size: 14px; opacity: 0.9;">90-Day Average</div>
+      <div style="font-size: 36px; font-weight: bold; margin: 10px 0;">
+        {% if states('sensor.blood_glucose_90day_avg') != 'unknown' %}
+          {{ states('sensor.blood_glucose_90day_avg') }}
+        {% else %}
+          --
+        {% endif %}
+      </div>
+      <div style="font-size: 12px; opacity: 0.8;">mg/dL</div>
+    </div>
+  </div>
+  
+  <div style="padding: 15px; background: #e3f2fd; border-left: 5px solid #2196F3; border-radius: 8px; margin-top: 20px;">
+    <strong>📝 Note:</strong> To enable averages, add the template sensors below to your configuration.yaml
+  </div>
 
 # ========================================
 # CARD 4: Blood Glucose Graph
@@ -169,9 +248,6 @@ entities:
   - entity: hae.marchealthsync_sleep_analysis_rem
     name: "Sleep - REM"
     icon: mdi:sleep
-  - entity: hae.marchealthsync_sleep_analysis_sleep
-    name: "Sleep - Total Sleep"
-    icon: mdi:sleep
 
 # ========================================
 # CARD 9: Sleep Graph
@@ -241,9 +317,6 @@ entities:
   - entity: hae.marchealthsync_apple_stand_time
     name: "Apple Stand Time"
     icon: mdi:human-handsup
-  - entity: hae.marchealthsync_environment_audio_exposure
-    name: "Environment Audio Exposure"
-    icon: mdi:ear-hearing
   - entity: hae.marchealthsync_flights_climbed
     name: "Flights Climbed"
     icon: mdi:stairs-up
