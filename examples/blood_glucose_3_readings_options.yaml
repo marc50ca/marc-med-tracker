@@ -1,0 +1,187 @@
+# Blood Glucose - 3 Daily Readings Display Options
+
+# First, you need to check what attributes your blood glucose sensor has
+# Go to Developer Tools → States → Find hae.marchealthsync_blood_glucose
+# Click on it to see all attributes
+
+# Based on what you see, choose the appropriate option below:
+
+# ========================================
+# OPTION 1: If sensor has "samples" or "readings" attribute
+# ========================================
+
+type: custom:auto-entities
+card:
+  type: entities
+  title: "🩸 Blood Glucose - Today's 3 Readings"
+  state_color: true
+filter:
+  template: |
+    {%- set entity_id = 'hae.marchealthsync_blood_glucose' -%}
+    {%- set samples = state_attr(entity_id, 'samples') | default([]) -%}
+    {%- set today = now().date().isoformat() -%}
+    {%- set today_samples = samples | selectattr('start_date', 'search', today) | list -%}
+    {%- for sample in today_samples[:3] -%}
+      {
+        'entity': entity_id,
+        'name': sample.start_date | as_timestamp | timestamp_custom('%I:%M %p'),
+        'secondary_info': sample.value ~ ' ' ~ state_attr(entity_id, 'unit_of_measurement'),
+        'icon': 'mdi:diabetes'
+      },
+    {%- endfor -%}
+show_empty: false
+
+# ========================================
+# OPTION 2: If sensor only shows current value (most common)
+# Create helper sensors to store each reading
+# ========================================
+
+# Add this to your configuration.yaml:
+
+input_number:
+  blood_glucose_reading_1:
+    name: "Blood Glucose - Morning"
+    min: 0
+    max: 30
+    step: 0.1
+    unit_of_measurement: "mmol/L"
+    icon: mdi:diabetes
+  
+  blood_glucose_reading_2:
+    name: "Blood Glucose - Afternoon"
+    min: 0
+    max: 30
+    step: 0.1
+    unit_of_measurement: "mmol/L"
+    icon: mdi:diabetes
+  
+  blood_glucose_reading_3:
+    name: "Blood Glucose - Evening"
+    min: 0
+    max: 30
+    step: 0.1
+    unit_of_measurement: "mmol/L"
+    icon: mdi:diabetes
+
+# Then use this dashboard card:
+
+type: entities
+title: "🩸 Blood Glucose - Today's 3 Readings"
+state_color: true
+entities:
+  - entity: input_number.blood_glucose_reading_1
+    name: "☀️ Morning (Fasting)"
+    icon: mdi:weather-sunset-up
+  - entity: input_number.blood_glucose_reading_2
+    name: "🌞 Afternoon (2hrs after lunch)"
+    icon: mdi:weather-sunny
+  - entity: input_number.blood_glucose_reading_3
+    name: "🌙 Evening (Before bed)"
+    icon: mdi:weather-sunset-down
+  - type: divider
+  - entity: hae.marchealthsync_blood_glucose
+    name: "Latest from Apple Health"
+    icon: mdi:apple
+
+# Add automation to reset at midnight:
+
+automation:
+  - alias: "Reset Blood Glucose Daily Readings"
+    trigger:
+      - platform: time
+        at: "00:00:00"
+    action:
+      - service: input_number.set_value
+        target:
+          entity_id:
+            - input_number.blood_glucose_reading_1
+            - input_number.blood_glucose_reading_2
+            - input_number.blood_glucose_reading_3
+        data:
+          value: 0
+
+# ========================================
+# OPTION 3: Use ApexCharts to show today's readings
+# Requires: custom:apexcharts-card from HACS
+# ========================================
+
+type: custom:apexcharts-card
+header:
+  title: "🩸 Blood Glucose - Today's Readings"
+  show: true
+graph_span: 24h
+span:
+  start: day
+series:
+  - entity: hae.marchealthsync_blood_glucose
+    name: "Blood Glucose"
+    type: column
+    group_by:
+      func: last
+      duration: 1h
+    show:
+      in_header: raw
+
+# ========================================
+# OPTION 4: History Stats Card (Built-in)
+# Shows readings from today
+# ========================================
+
+type: history-graph
+title: "🩸 Blood Glucose - Today"
+hours_to_show: 24
+entities:
+  - entity: hae.marchealthsync_blood_glucose
+    name: "Blood Glucose"
+
+# ========================================
+# OPTION 5: Use Logbook Card
+# Shows when readings were taken
+# ========================================
+
+type: logbook
+title: "🩸 Blood Glucose - Today's Log"
+entities:
+  - hae.marchealthsync_blood_glucose
+hours_to_show: 24
+
+# ========================================
+# OPTION 6: Custom Multiple Entity Row
+# Shows current + attributes if they exist
+# ========================================
+
+type: entities
+title: "🩸 Blood Glucose - Readings"
+entities:
+  - type: custom:multiple-entity-row
+    entity: hae.marchealthsync_blood_glucose
+    name: "Blood Glucose"
+    icon: mdi:diabetes
+    state_header: "Current"
+    entities:
+      - attribute: previous_1
+        name: "2nd"
+      - attribute: previous_2
+        name: "3rd"
+
+# ========================================
+# RECOMMENDED WORKFLOW
+# ========================================
+#
+# 1. Check what your sensor actually provides:
+#    - Go to Developer Tools → States
+#    - Find hae.marchealthsync_blood_glucose
+#    - Look at the attributes section
+#
+# 2. Choose the appropriate option:
+#    - If you see "samples" or "readings" → Use Option 1
+#    - If sensor only shows current value → Use Option 2 (manual entry)
+#    - If you want visual → Use Option 3 (ApexCharts)
+#    - If you want simple history → Use Option 4 (History Graph)
+#
+# 3. Most realistic for 3 readings per day:
+#    → Option 2 (input_number helpers)
+#    → Manually enter each reading after testing
+#    → Gives you full control and tracking
+#
+# ========================================

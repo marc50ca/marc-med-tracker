@@ -52,91 +52,89 @@ content: |
 # CARD 3: Blood Glucose - 3 Daily Readings
 # ========================================
 
+# RECOMMENDED: Manual Entry Version (Most Practical)
+# Add the input_number helpers from blood_glucose_3_readings_options.yaml first
+
 type: entities
-title: "🩸 Blood Glucose - Today's Readings"
+title: "🩸 Blood Glucose - Today's 3 Readings"
 state_color: true
 entities:
+  - entity: input_number.blood_glucose_reading_1
+    name: "☀️ Morning (Fasting)"
+    icon: mdi:weather-sunset-up
+  - entity: input_number.blood_glucose_reading_2
+    name: "🌞 Afternoon (2hrs after lunch)"
+    icon: mdi:weather-sunny
+  - entity: input_number.blood_glucose_reading_3
+    name: "🌙 Evening (Before bed)"
+    icon: mdi:weather-sunset-down
+  - type: divider
   - entity: hae.marchealthsync_blood_glucose
-    name: "Current Reading"
-    icon: mdi:diabetes
-  - type: custom:auto-entities
-    card:
-      type: entities
-    filter:
-      include:
-        - entity_id: hae.marchealthsync_blood_glucose
-          options:
-            type: custom:multiple-entity-row
-            name: "Last 3 Readings"
-            state_header: "Latest"
-            entities:
-              - attribute: history_1
-                name: "2nd"
-              - attribute: history_2
-                name: "3rd"
+    name: "Latest from Apple Health"
+    icon: mdi:apple
+    secondary_info: last-changed
+
+# ALTERNATIVE: If you prefer to see history from Apple Health sensor
+# Uncomment this version instead:
+
+# type: history-graph
+# title: "🩸 Blood Glucose - Today's Readings"
+# hours_to_show: 24
+# entities:
+#   - entity: hae.marchealthsync_blood_glucose
+#     name: "Blood Glucose"
+
+# NOTE: See blood_glucose_3_readings_options.yaml for 6 different display methods
+# Choose the one that works best with your Apple Health integration
 
 # ========================================
 # CARD 3A: Blood Glucose Averages
 # ========================================
 
 type: markdown
-content: |
+content: >
   ## 📊 Blood Glucose Averages
-  
-  {% set sensor = 'hae.marchealthsync_blood_glucose' %}
-  {% set readings_7d = [] %}
-  {% set readings_30d = [] %}
-  {% set readings_90d = [] %}
-  
-  {# Get readings from the last 90 days #}
-  {% set now_ts = now().timestamp() %}
-  {% set day_7 = now_ts - (7 * 86400) %}
-  {% set day_30 = now_ts - (30 * 86400) %}
-  {% set day_90 = now_ts - (90 * 86400) %}
-  
-  {# Note: This requires history statistics or similar #}
-  {# Simplified version showing current approach #}
-  
+
   <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
     <div style="padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white; text-align: center;">
       <div style="font-size: 14px; opacity: 0.9;">7-Day Average</div>
       <div style="font-size: 36px; font-weight: bold; margin: 10px 0;">
-        {% if states('sensor.blood_glucose_7day_avg') != 'unknown' %}
-          {{ states('sensor.blood_glucose_7day_avg') }}
+        {% if states('sensor.blood_glucose_7_day_average') not in ['unknown', 'unavailable'] %}
+          {{ states('sensor.blood_glucose_7_day_average') }}
         {% else %}
           --
         {% endif %}
       </div>
-      <div style="font-size: 12px; opacity: 0.8;">mg/dL</div>
+      <div style="font-size: 12px; opacity: 0.8;">mmol/L</div>
     </div>
     
     <div style="padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; color: white; text-align: center;">
       <div style="font-size: 14px; opacity: 0.9;">30-Day Average</div>
       <div style="font-size: 36px; font-weight: bold; margin: 10px 0;">
-        {% if states('sensor.blood_glucose_30day_avg') != 'unknown' %}
-          {{ states('sensor.blood_glucose_30day_avg') }}
+        {% if states('sensor.blood_glucose_30_day_average') not in ['unknown', 'unavailable'] %}
+          {{ states('sensor.blood_glucose_30_day_average') }}
         {% else %}
           --
         {% endif %}
       </div>
-      <div style="font-size: 12px; opacity: 0.8;">mg/dL</div>
+      <div style="font-size: 12px; opacity: 0.8;">mmol/L</div>
     </div>
     
     <div style="padding: 20px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; color: white; text-align: center;">
       <div style="font-size: 14px; opacity: 0.9;">90-Day Average</div>
       <div style="font-size: 36px; font-weight: bold; margin: 10px 0;">
-        {% if states('sensor.blood_glucose_90day_avg') != 'unknown' %}
-          {{ states('sensor.blood_glucose_90day_avg') }}
+        {% if states('sensor.blood_glucose_90_day_average') not in ['unknown', 'unavailable'] %}
+          {{ states('sensor.blood_glucose_90_day_average') }}
         {% else %}
           --
         {% endif %}
       </div>
-      <div style="font-size: 12px; opacity: 0.8;">mg/dL</div>
+      <div style="font-size: 12px; opacity: 0.8;">mmol/L</div>
     </div>
   </div>
   
   <div style="padding: 15px; background: #e3f2fd; border-left: 5px solid #2196F3; border-radius: 8px; margin-top: 20px;">
-    <strong>📝 Note:</strong> To enable averages, add the template sensors below to your configuration.yaml
+    <strong>📝 Note:</strong> Averages will show after you add the template sensors from blood_glucose_averages.yaml to your configuration.
   </div>
 
 # ========================================
