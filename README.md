@@ -4,10 +4,10 @@ A comprehensive Home Assistant custom integration for tracking medications, incl
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2024.1%2B-blue.svg)](https://www.home-assistant.io/)
-[![Version](https://img.shields.io/badge/version-2.0.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.1.1-green.svg)](CHANGELOG.md)
 [![hacs](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz)
-[![GitHub Release](https://img.shields.io/github/release/yourusername/marc-med-tracker.svg)](https://github.com/yourusername/marc-med-tracker/releases)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/yourusername/marc-med-tracker/graphs/commit-activity)
+[![GitHub Release](https://img.shields.io/github/release/marc50ca/marc-med-tracker.svg)](https://github.com/marc50ca/marc-med-tracker/releases)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/marc50ca/marc-med-tracker/graphs/commit-activity)
 
 ## Quick Links
 
@@ -91,7 +91,7 @@ See `medication_details_simple.yaml` for a ready-to-use panel!
 
 - **Home Assistant Version**: 2024.1.0 or later
 - **Python**: 3.11 or later
-- **Tested**: Up to Home Assistant 2025.2.x
+- **Tested**: Up to Home Assistant 2026.4.x
 
 See [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) for detailed version information.
 
@@ -103,10 +103,6 @@ See [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) for detailed version informat
    ```
 
 2. Restart Home Assistant
-
-### HACS Installation (Coming Soon)
-
-This integration will be available through HACS in the future.
 
 ## Configuration
 
@@ -693,7 +689,7 @@ Example: `2026-02-16`
 ## Support
 
 For issues, feature requests, or contributions, please visit:
-[GitHub Repository](https://github.com/yourusername/marc_med_tracker)
+[GitHub Repository](https://github.com/marc50ca/marc-med-tracker)
 
 ## License
 
