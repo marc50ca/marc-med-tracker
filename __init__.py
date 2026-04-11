@@ -88,7 +88,10 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             "current_stock": current_stock,
         }
     
-    await store.async_save(hass.data[DOMAIN])
+    await store.async_save({
+        "medications": hass.data[DOMAIN]["medications"],
+        "dose_tracking": hass.data[DOMAIN]["dose_tracking"],
+    })
     
     # Register services
     async def handle_take_dose(call: ServiceCall) -> None:
@@ -104,7 +107,10 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         pills_taken = doses * medication["pills_per_dose"]
         medication["current_stock"] = max(0, medication["current_stock"] - pills_taken)
         
-        await store.async_save(hass.data[DOMAIN])
+        await store.async_save({
+        "medications": hass.data[DOMAIN]["medications"],
+        "dose_tracking": hass.data[DOMAIN]["dose_tracking"],
+    })
         hass.bus.async_fire(f"{DOMAIN}_dose_taken", {"medication_id": med_id, "doses": doses})
         _LOGGER.info(f"Recorded {doses} dose(s) of {medication['name']}")
     
@@ -122,7 +128,10 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         medication["last_refilled"] = datetime.now().date().isoformat()
         medication["refills_left"] = max(0, medication["refills_left"] - 1)
         
-        await store.async_save(hass.data[DOMAIN])
+        await store.async_save({
+        "medications": hass.data[DOMAIN]["medications"],
+        "dose_tracking": hass.data[DOMAIN]["dose_tracking"],
+    })
         hass.bus.async_fire(f"{DOMAIN}_refilled", {"medication_id": med_id, "pills": pills})
         _LOGGER.info(f"Refilled {medication['name']} with {pills} pills")
     
@@ -138,7 +147,10 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         medication = hass.data[DOMAIN]["medications"][med_id]
         medication["refills_left"] = refills
         
-        await store.async_save(hass.data[DOMAIN])
+        await store.async_save({
+        "medications": hass.data[DOMAIN]["medications"],
+        "dose_tracking": hass.data[DOMAIN]["dose_tracking"],
+    })
         _LOGGER.info(f"Updated refills for {medication['name']} to {refills}")
     
     async def handle_check_off_dose(call: ServiceCall) -> None:
@@ -192,7 +204,10 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         old_doctor = medication.get("prescribing_doctor", "Unknown")
         medication["prescribing_doctor"] = doctor_name
         
-        await store.async_save(hass.data[DOMAIN])
+        await store.async_save({
+        "medications": hass.data[DOMAIN]["medications"],
+        "dose_tracking": hass.data[DOMAIN]["dose_tracking"],
+    })
         hass.bus.async_fire(
             f"{DOMAIN}_doctor_updated",
             {
@@ -217,7 +232,10 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         old_stock = medication.get("current_stock", 0)
         medication["current_stock"] = new_stock
         
-        await store.async_save(hass.data[DOMAIN])
+        await store.async_save({
+        "medications": hass.data[DOMAIN]["medications"],
+        "dose_tracking": hass.data[DOMAIN]["dose_tracking"],
+    })
         hass.bus.async_fire(
             f"{DOMAIN}_stock_updated",
             {
