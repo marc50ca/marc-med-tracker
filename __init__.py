@@ -154,42 +154,38 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         _LOGGER.info(f"Updated refills for {medication['name']} to {refills}")
     
     async def handle_check_off_dose(call: ServiceCall) -> None:
-        """Check off a daily dose (turn on the binary sensor)."""
+        """Check off a daily dose (turn on the input_boolean helper)."""
         dose_id = call.data.get("dose_id")
-        
-        # Find and turn on the corresponding binary sensor
-        entity_id = f"binary_sensor.medication_{dose_id}"
-        entity = hass.states.get(entity_id)
-        
-        if entity is None:
-            _LOGGER.error(f"Dose tracker {dose_id} not found")
+        entity_id = f"input_boolean.marc_med_{dose_id}_helper"
+
+        if hass.states.get(entity_id) is None:
+            _LOGGER.error(f"Dose helper {entity_id} not found")
             return
-        
-        # Call the turn_on service for the binary sensor
+
         await hass.services.async_call(
-            "binary_sensor",
+            "input_boolean",
             "turn_on",
             {"entity_id": entity_id},
-            blocking=True
+            blocking=True,
         )
-    
+        _LOGGER.info(f"Checked off dose: {dose_id}")
+
     async def handle_uncheck_dose(call: ServiceCall) -> None:
-        """Uncheck a daily dose (turn off the binary sensor)."""
+        """Uncheck a daily dose (turn off the input_boolean helper)."""
         dose_id = call.data.get("dose_id")
-        
-        entity_id = f"binary_sensor.medication_{dose_id}"
-        entity = hass.states.get(entity_id)
-        
-        if entity is None:
-            _LOGGER.error(f"Dose tracker {dose_id} not found")
+        entity_id = f"input_boolean.marc_med_{dose_id}_helper"
+
+        if hass.states.get(entity_id) is None:
+            _LOGGER.error(f"Dose helper {entity_id} not found")
             return
-        
+
         await hass.services.async_call(
-            "binary_sensor",
+            "input_boolean",
             "turn_off",
             {"entity_id": entity_id},
-            blocking=True
+            blocking=True,
         )
+        _LOGGER.info(f"Unchecked dose: {dose_id}")
     
     async def handle_update_doctor(call: ServiceCall) -> None:
         """Update the prescribing doctor for a medication."""
