@@ -4,49 +4,77 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**Marc Med Tracker v2.1.1** — A Home Assistant custom integration (HACS) for medication tracking, health metrics from Apple Health, and iPhone notifications. The target repository is `marc50ca/marc-med-tracker` on GitHub.
+**Marc Med Tracker v2.1.1** — A Home Assistant custom integration (HACS) for medication tracking, health metrics from Apple Health, and iPhone notifications. GitHub: `marc50ca/marc-med-tracker`.
 
 ## Development Commands
 
 ```bash
 make install       # Install dependencies (homeassistant, voluptuous, black, ruff, pytest)
 make test          # Run tests (pytest tests/)
-make lint          # ruff + black --check + isort --check
-make format        # black + isort (auto-fix)
-make validate      # Validate manifest.json, services.yaml, Python syntax
 make release       # Build marc-med-tracker.zip for distribution
 ```
 
-Run a single test file: `pytest tests/test_calculations.py -v`
+Run a single test: `pytest tests/test_calculations.py -v`
 
-**Note:** The Makefile's `lint`/`format`/`validate` targets reference `marc_med_tracker/` (a subdirectory), but the integration Python files (`__init__.py`, `sensor.py`, `binary_sensor.py`) currently live in the repo root. Adjust paths if running those targets directly.
+**Makefile path mismatch (blocker):** `lint`, `format`, and `validate` targets all reference `marc_med_tracker/` (a subdirectory that doesn't exist) — the Python files live in the repo root. Run these directly instead:
 
-## Deployment Context
+```bash
+ruff check .                  # lint
+black --check .                # format check
+python scripts/validate_manifest.py
+python scripts/validate_services.py
+python -m py_compile __init__.py sensor.py binary_sensor.py
+```
 
-This is a **Home Assistant custom integration**, not a standalone app. Code runs inside Home Assistant's Python environment. Configuration is YAML-based. There is no local build/test pipeline — all validation is done against a running Home Assistant instance or via the GitHub Actions workflows in `.github/workflows/`.
+## Deployment
 
-The integration files (`__init__.py`, `sensor.py`, `binary_sensor.py`, etc.) are placed in Home Assistant's `custom_components/marc_med_tracker/` directory.
+Integration files go in HA's `custom_components/marc_med_tracker/`. The `examples/` directory contains YAML for the user to copy into their HA config — it is not loaded by the integration itself.
+
+## Known Bugs in Source
+
+### 1. Indentation error in `__init__.py` — affects all service handlers
+Every `await store.async_save(...)` block has misaligned indentation: the code that fires the HA bus event and logs is outdented to the function body level rather than staying inside the `if` block. This means `hass.bus.async_fire(...)` and `_LOGGER.info(...)` execute even when the medication is not found. Affects: `handle_take_dose`, `handle_refill`, `handle_update_refills`, `handle_update_doctor`, `handle_update_stock`.
+
+### 2. Schema rejects fractional `pills_per_dose`
+`MEDICATION_SCHEMA` defines `pills_per_dose` as `cv.positive_int`, but Spironolactone uses `0.5`. This causes a voluptuous validation error on HA restart. Change to `vol.Coerce(float)` with a range validator.
+
+### 3. Stock resets on HA restart
+On `async_setup`, stored data is loaded then **overwritten** by recalculated stock (`initial_stock - days_elapsed × daily_rate`). Any stock changes made via `update_stock` or `take_dose` services are lost on restart. Stored data needs to take precedence over the calculated fallback.
 
 ## Architecture
 
-The integration has two layers:
+Two layers:
 
-1. **Integration layer** (`__init__.py`, `sensor.py`, `binary_sensor.py`, `services.yaml`, `manifest.json`) — standard Home Assistant custom component structure. Binary sensors have a known loading issue; the workaround is manual template sensors defined in `examples/manual_binary_sensors.yaml`.
+1. **Integration layer** — `__init__.py` (setup + services), `sensor.py` (stock sensors), `binary_sensor.py` (dose-due sensors). Uses HA's `Store` helper to persist state to `.storage/marc_med_tracker.medications`.
 
-2. **Configuration layer** (`examples/`) — YAML files the user copies into their Home Assistant configuration. These are not executed by the integration itself; they use Home Assistant's built-in `template`, `input_boolean`, `input_number`, `automation`, and `script` platforms.
+2. **Configuration layer** — `examples/` YAML files the user copies into their HA config using built-in `template`, `input_boolean`, `automation`, and `script` platforms.
+
+### Medication ID derivation
+`med_id = name.lower().replace(" ", "_")` — used as the dict key in storage, the service `medication_id` parameter, and the sensor entity ID suffix (`sensor.marc_med_{med_id}`).
+
+### Dose tracking vs stock tracking
+These are separate systems:
+- **Stock tracking**: `current_stock` integer in the medications dict, modified by `take_dose`, `refill`, `update_stock` services.
+- **Dose tracking**: `check_off_dose` / `uncheck_dose` services toggle `input_boolean.marc_med_{dose_id}_helper` entities. Valid `dose_id` values: `morning`, `lunch`, `evening`, `morning_puffer`, `evening_puffer`. These helpers must be created manually in HA config — they are not created by the integration.
+
+### Sensor status thresholds
+`_get_status()` in `sensor.py`: `OUT_OF_STOCK` (0 pills) → `CRITICAL` (≤3 days) → `LOW` (≤7 days) → `NO_REFILLS_LEFT` (≤14 days + 0 refills) → `OK`.
+
+### Binary sensor workaround
+Binary sensors defined in `binary_sensor.py` fail to load (root cause unknown). Use `examples/manual_binary_sensors.yaml` with modern `template:` syntax instead of `platform: template`.
 
 ## Key Domain Rules
 
-- **Blood glucose units: mmol/L** (Canadian standard). Never use mg/dL. Fasting target: 4.0–7.0 mmol/L; post-meal: 5.0–10.0 mmol/L.
-- **A1C formula:** `A1C (%) = (avg_mmol_L × 0.555) + 2.59`
-- **Spironolactone dose:** 0.5 tablet of a 60mg pill = 30mg actual dose.
-- **Zenhale:** 1 puff twice daily; must include "rinse mouth" reminder.
-- **Metformin:** 2 tablets per dose, twice daily (4 tablets/day).
-- **iPhone notifications:** `notify.mobile_app_marcs_iphone_14` at 9:30, 14:30, 19:30.
+- **Blood glucose: mmol/L** (Canadian standard, never mg/dL). Fasting target: 4.0–7.0; post-meal: 5.0–10.0.
+- **A1C formula:** `(avg_mmol_L × 0.555) + 2.59`
+- **Spironolactone:** 0.5 tablet of 60mg = 30mg actual dose.
+- **Zenhale:** 1 puff twice daily; always include rinse-mouth reminder.
+- **Metformin:** 2 tablets × 2 daily = 4 tablets/day.
+- **Notifications:** `notify.mobile_app_marcs_iphone_14` at 9:30, 14:30, 19:30.
 
 ## Medications (8 total)
 
-| Medication | Dose | Time | Prescriber | Initial Stock |
+| Medication | Dose | Schedule | Prescriber | Initial Stock |
 |---|---|---|---|---|
 | Metformin 500mg | 2 tabs | morning + lunch | NP T. Wakefield | 360 |
 | Jardiance 40mg | 1 tab | evening | NP T. Wakefield | 90 |
@@ -57,21 +85,15 @@ The integration has two layers:
 | Spironolactone 60mg | 0.5 tab | morning | Dr. K. Ducet | 45 |
 | Zenhale 100/6mcg | 1 puff | morning + evening | Dr. K. Safka | 200 doses |
 
-Refill dates: NP T. Wakefield → March 25, 2026; Dr. K. Ducet & Dr. K. Safka → February 1, 2026.
-
-## Known Issues
-
-- **Binary sensors won't load** from the integration itself (root cause unknown). Workaround: use `examples/manual_binary_sensors.yaml` with modern `template:` syntax (not legacy `platform: template`).
-- **Dashboard YAML** must be installed card-by-card via the manual card editor — pasting the full view YAML causes "Expected an array value, but received: undefined".
-- **Markdown card averages** require `content: >` (not `content: |`) for HTML rendering.
+Refill dates: NP T. Wakefield → 2026-03-25; Dr. K. Ducet & Dr. K. Safka → 2026-02-01.
 
 ## Apple Health Sensors
 
-Prefix for all sensors: `hae.marchealthsync_`. Total: 33 sensors across blood glucose (1), cardiovascular (10), sleep (7), weight (3), activity (12). Sensors within each section are alphabetically sorted. The excluded sensors are `hae.marchealthsync_sleep_analysis_sleep` (duplicate) and `hae.marchealthsync_environment_audio_exposure`.
+Prefix: `hae.marchealthsync_`. Total 33 sensors: blood glucose (1), cardiovascular (10), sleep (7), weight (3), activity (12). Excluded: `_sleep_analysis_sleep` (duplicate), `_environment_audio_exposure`.
 
 ## YAML Conventions
 
-- All example YAML must be validated for zero syntax errors before delivery.
-- Use modern Home Assistant template syntax throughout.
-- Automation IDs follow the pattern `marc_med_<description>`.
-- Stock alert thresholds: LOW ≤ 7 days supply, CRITICAL ≤ 3 days (DND bypass), OUT_OF_STOCK (3 urgent alerts).
+- Automation IDs: `marc_med_<description>`
+- Dashboard YAML must be installed card-by-card via the manual card editor — pasting a full view YAML fails with "Expected an array value, but received: undefined"
+- Markdown card averages require `content: >` (not `content: |`) for HTML rendering
+- Stock alert thresholds: LOW ≤ 7 days, CRITICAL ≤ 3 days (DND bypass), OUT_OF_STOCK (3 urgent alerts)

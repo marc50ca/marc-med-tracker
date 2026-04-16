@@ -270,18 +270,18 @@ entities:
 # CARD 10: Weight Metrics
 # ========================================
 
-type: entities
+type: glance
 title: "⚖️ Weight & Body Composition"
 state_color: true
 entities:
   - entity: hae.marchealthsync_body_mass_index
-    name: "Body Mass Index (BMI)"
+    name: "BMI"
     icon: mdi:human
   - entity: hae.marchealthsync_lean_body_mass
     name: "Lean Body Mass"
     icon: mdi:weight-lifter
   - entity: hae.marchealthsync_weight_body_mass
-    name: "Weight (Body Mass)"
+    name: "Weight"
     icon: mdi:weight
 
 # ========================================

@@ -8,26 +8,29 @@ sensor:
   # 7-Day Average
   - platform: statistics
     name: "Blood Glucose 7-Day Average"
+    unique_id: blood_glucose_7day_average
     entity_id: hae.marchealthsync_blood_glucose
     state_characteristic: mean
     max_age:
       days: 7
     sampling_size: 500
     precision: 1
-  
+
   # 30-Day Average
   - platform: statistics
     name: "Blood Glucose 30-Day Average"
+    unique_id: blood_glucose_30day_average
     entity_id: hae.marchealthsync_blood_glucose
     state_characteristic: mean
     max_age:
       days: 30
     sampling_size: 1000
     precision: 1
-  
-  # 90-Day Average  
+
+  # 90-Day Average
   - platform: statistics
     name: "Blood Glucose 90-Day Average"
+    unique_id: blood_glucose_90day_average
     entity_id: hae.marchealthsync_blood_glucose
     state_characteristic: mean
     max_age:
