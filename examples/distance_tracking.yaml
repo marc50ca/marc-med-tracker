@@ -195,10 +195,11 @@ icon: mdi:map-marker-distance
 
 ---
 
-# Card 2: Quarterly / yearly summary table
+# Card 2: Quarterly / yearly summary — coloured boxes, active quarter highlighted
+# Active quarter: bright gradient. Inactive: muted dark box.
+# Q1=blue  Q2=green  Q3=pink  Q4=orange-yellow  Year=purple
 type: markdown
 content: >
-  {% set today = states('hae.marchealthsync_walking_running_distance') | float(0) | round(2) %}
   {% set q1 = states('input_number.distance_q1_total') | float(0) | round(1) %}
   {% set q2 = states('input_number.distance_q2_total') | float(0) | round(1) %}
   {% set q3 = states('input_number.distance_q3_total') | float(0) | round(1) %}
@@ -207,17 +208,35 @@ content: >
   {% set m = now().month %}
   {% set cq = 'Q1' if m <= 3 else ('Q2' if m <= 6 else ('Q3' if m <= 9 else 'Q4')) %}
 
-  **Today:** {{ today }} km{% if today <= 1.6 %}  _(< 1.6 km — not counted)_{% endif %}
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+    <div style="padding:16px;background:{% if cq=='Q1' %}linear-gradient(135deg,#4facfe,#00f2fe){% else %}rgba(100,100,130,0.3){% endif %};border-radius:10px;text-align:center;color:white;">
+      <div style="font-size:11px;opacity:0.85;margin-bottom:4px;">{% if cq=='Q1' %}▶ {% endif %}Q1 &nbsp;·&nbsp; Jan–Mar</div>
+      <div style="font-size:28px;font-weight:bold;">{{ q1 }}</div>
+      <div style="font-size:11px;opacity:0.7;">km</div>
+    </div>
+    <div style="padding:16px;background:{% if cq=='Q2' %}linear-gradient(135deg,#43e97b,#38f9d7){% else %}rgba(100,100,130,0.3){% endif %};border-radius:10px;text-align:center;color:white;">
+      <div style="font-size:11px;opacity:0.85;margin-bottom:4px;">{% if cq=='Q2' %}▶ {% endif %}Q2 &nbsp;·&nbsp; Apr–Jun</div>
+      <div style="font-size:28px;font-weight:bold;">{{ q2 }}</div>
+      <div style="font-size:11px;opacity:0.7;">km</div>
+    </div>
+    <div style="padding:16px;background:{% if cq=='Q3' %}linear-gradient(135deg,#f093fb,#f5576c){% else %}rgba(100,100,130,0.3){% endif %};border-radius:10px;text-align:center;color:white;">
+      <div style="font-size:11px;opacity:0.85;margin-bottom:4px;">{% if cq=='Q3' %}▶ {% endif %}Q3 &nbsp;·&nbsp; Jul–Sep</div>
+      <div style="font-size:28px;font-weight:bold;">{{ q3 }}</div>
+      <div style="font-size:11px;opacity:0.7;">km</div>
+    </div>
+    <div style="padding:16px;background:{% if cq=='Q4' %}linear-gradient(135deg,#fa709a,#fee140){% else %}rgba(100,100,130,0.3){% endif %};border-radius:10px;text-align:center;color:white;">
+      <div style="font-size:11px;opacity:0.85;margin-bottom:4px;">{% if cq=='Q4' %}▶ {% endif %}Q4 &nbsp;·&nbsp; Oct–Dec</div>
+      <div style="font-size:28px;font-weight:bold;">{{ q4 }}</div>
+      <div style="font-size:11px;opacity:0.7;">km</div>
+    </div>
+  </div>
 
-  | Quarter | Period | Total |
-  |---------|--------|-------|
-  | Q1 {% if cq == 'Q1' %}▶{% endif %} | Jan – Mar | **{{ q1 }} km** |
-  | Q2 {% if cq == 'Q2' %}▶{% endif %} | Apr – Jun | **{{ q2 }} km** |
-  | Q3 {% if cq == 'Q3' %}▶{% endif %} | Jul – Sep | **{{ q3 }} km** |
-  | Q4 {% if cq == 'Q4' %}▶{% endif %} | Oct – Dec | **{{ q4 }} km** |
-  | **Year** | Jan – Dec | **{{ yearly }} km** |
+  <div style="padding:14px;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:10px;text-align:center;color:white;margin-bottom:6px;">
+    <div style="font-size:12px;opacity:0.8;">{{ now().year }} Year Total</div>
+    <div style="font-size:30px;font-weight:bold;margin:4px 0;">{{ yearly }} km</div>
+  </div>
 
-  *Only days with > 1.6 km are counted. Captured nightly at 23:55.*
+  <div style="font-size:10px;opacity:0.4;text-align:center;">only days &gt; 1.6 km &nbsp;·&nbsp; captured nightly 23:55</div>
 
 ---
 
